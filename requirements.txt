@@ -1,0 +1,32 @@
+# I'm listing all of the libraries being used for this project.
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pydantic-settings
+
+# PDF extraction
+pymupdf
+pdfplumber
+
+# Web scraping
+httpx
+beautifulsoup4
+crawl4ai
+
+# Embeddings
+sentence-transformers
+openai
+
+# Vector DB
+qdrant-client
+
+# LLM
+anthropic
+
+# Chunking & text
+langchain-text-splitters
+tiktoken
+
+# Async utilities
+tenacity

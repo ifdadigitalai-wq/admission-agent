@@ -1,0 +1,76 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [vector]
+}
+
+enum LeadStatus {
+  PENDING
+  CONTACTED
+  CONVERTED
+  REJECTED
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  posts Post[]
+}
+
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean @default(false)
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId  Int
+}
+
+model Faq {
+  id        String                      @id @default(uuid())
+  question  String
+  answer    String
+  embedding Unsupported("vector(768)")?
+}
+
+model Lead {
+  id        String     @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  course    String
+  status    LeadStatus @default(PENDING)
+  notes     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+enum AppointmentType {
+  CALL
+  VISIT
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+model Appointment {
+  id        String            @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  course    String?
+  type      AppointmentType
+  date      String
+  time      String
+  status    AppointmentStatus @default(SCHEDULED)
+  createdAt DateTime          @default(now())
+}

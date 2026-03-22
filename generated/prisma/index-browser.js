@@ -165,6 +165,15 @@ exports.Prisma.AppointmentScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AdminScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  password: 'password',
+  role: 'role',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -202,7 +211,8 @@ exports.Prisma.ModelName = {
   Post: 'Post',
   Faq: 'Faq',
   Lead: 'Lead',
-  Appointment: 'Appointment'
+  Appointment: 'Appointment',
+  Admin: 'Admin'
 };
 
 /**

@@ -74,3 +74,12 @@ model Appointment {
   status    AppointmentStatus @default(SCHEDULED)
   createdAt DateTime          @default(now())
 }
+
+model Admin {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String // bcrypt hashed
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+}

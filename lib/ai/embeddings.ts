@@ -1,4 +1,4 @@
-// lib/ai/embeddings.ts
+
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { prisma } from "@/lib/db/prisma";
 
@@ -27,10 +27,10 @@ export async function embedAllFaqs() {
       WHERE id = ${faq.id}
     `;
 
-    console.log(`✅ Embedded FAQ: ${faq.question}`);
+    console.log(` Embedded FAQ: ${faq.question}`);
   }
 
-  console.log("✅ All FAQs embedded successfully!");
+  console.log(" All FAQs embedded successfully!");
 }
 
 // Find the most similar FAQs to a user query

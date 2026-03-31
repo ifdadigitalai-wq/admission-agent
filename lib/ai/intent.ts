@@ -1,7 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
+import openai from "openai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
+const openaiClient = new openai.OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+});
+// you can use openaiclient to call it in place of genAI if you want to switch to openai's models instead of google's gemini
+// simply comment out genAI related code and uncomment the openaiClient code in getAIResponse function
 export type LeadInfo = {
   name?: string;
   email?: string;

@@ -1,31 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, KeyboardEvent } from "react";
 
-type Message = {
-  role: "user" | "bot";
-  content: string;
-};
-
+type Message = { role: "user" | "bot"; content: string };
 type LeadInfo = {
-  name?: string;
-  email?: string;
-  phone?: string;
-  course?: string;
-  collected?: boolean;
+  name?: string; email?: string; phone?: string;
+  course?: string; collected?: boolean;
 };
+
+// ✅ Generate a unique session ID per browser tab
+function getSessionId(): string {
+  if (typeof window === "undefined") return "";
+  let id = sessionStorage.getItem("chat_session_id");
+  if (!id) {
+    id = `session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    sessionStorage.setItem("chat_session_id", id);
+  }
+  return id;
+}
 
 export default function useChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [leadInfo, setLeadInfo] = useState<LeadInfo>({});
   const [isEnrolling, setIsEnrolling] = useState(false);
-
-  // ✅ Scheduling states
   const [isScheduling, setIsScheduling] = useState(false);
   const [schedulingStep, setSchedulingStep] = useState<string | null>(null);
   const [scheduleData, setScheduleData] = useState<any>({});
   const [availableDates, setAvailableDates] = useState<string[]>([]);
+  const sessionId = useRef(getSessionId()); // ✅ stable across renders
 
   const sendMessage = async (input: string) => {
     if (!input.trim()) return;
@@ -42,20 +45,18 @@ export default function useChat() {
           message: input,
           leadInfo,
           isEnrolling,
-          isScheduling,     // ✅
-          schedulingStep,   // ✅
-          scheduleData,     // ✅
-          availableDates,   // ✅
+          isScheduling,
+          schedulingStep,
+          scheduleData,
+          availableDates,
+          sessionId: sessionId.current, // ✅ send session ID
         }),
       });
 
       const data = await res.json();
 
-      // Update lead info
       if (data.leadInfo) setLeadInfo(data.leadInfo);
       if (typeof data.isEnrolling === "boolean") setIsEnrolling(data.isEnrolling);
-
-      // ✅ Update scheduling states from response
       if (typeof data.isScheduling === "boolean") setIsScheduling(data.isScheduling);
       if (data.schedulingStep !== undefined) setSchedulingStep(data.schedulingStep);
       if (data.scheduleData) setScheduleData(data.scheduleData);
@@ -65,7 +66,6 @@ export default function useChat() {
         role: "bot",
         content: data.reply || "Something went wrong.",
       };
-
       setMessages((prev) => [...prev, botMessage]);
     } catch (err) {
       console.error(err);
@@ -78,14 +78,23 @@ export default function useChat() {
     }
   };
 
+  // ✅ Reset session on new chat
+  const resetSession = () => {
+    const newId = `session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    sessionStorage.setItem("chat_session_id", newId);
+    sessionId.current = newId;
+    setMessages([]);
+    setLeadInfo({});
+    setIsEnrolling(false);
+    setIsScheduling(false);
+    setSchedulingStep(null);
+    setScheduleData({});
+    setAvailableDates([]);
+  };
+
   return {
-    messages,
-    sendMessage,
-    loading,
-    leadInfo,
-    isEnrolling,
-    isScheduling,   // ✅
-    schedulingStep, // ✅
-    scheduleData,   // ✅
+    messages, sendMessage, loading, leadInfo,
+    isEnrolling, isScheduling, schedulingStep,
+    scheduleData, resetSession,
   };
 }

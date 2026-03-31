@@ -1,9 +1,9 @@
-// app/api/admin/leads/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-
 import { jwtVerify } from "jose";
+
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "your-super-secret-jwt-key-change-this");
+
 async function verifyAdmin(req: NextRequest) {
   try {
     const token = req.cookies.get("admin_token")?.value || req.headers.get("authorization")?.replace("Bearer ", "");
@@ -12,18 +12,19 @@ async function verifyAdmin(req: NextRequest) {
     return payload;
   } catch { return null; }
 }
+
 export async function GET(req: NextRequest) {
-  try {
-    const admin = await verifyAdmin(req);
-    if (!admin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const leads = await prisma.lead.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    return NextResponse.json(leads);
-  } catch (error) {
-    console.error("Lead fetch error:", JSON.stringify(error, null, 2)); //  detailed log
-    return NextResponse.json({ error: String(error) }, { status: 500 }); //  return real error
-  }
+  const admin = await verifyAdmin(req);
+
+  const conversations = await prisma.conversation.findMany({
+    orderBy: { updatedAt: "desc" },
+    include: {
+      messages: {
+        orderBy: { createdAt: "desc" },
+        take: 1, // last message preview
+      },
+    },
+  });
+
+  return NextResponse.json(conversations);
 }

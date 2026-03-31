@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminFromRequest } from "@/lib/auth/middleware";
 import { prisma } from "@/lib/db/prisma";
+import { jwtVerify } from "jose";
 
 export async function GET(req: NextRequest) {
-  const admin = getAdminFromRequest(req);
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "your-super-secret-jwt-key-change-this");
+async function verifyAdmin(req: NextRequest) {
+  try {
+    const token = req.cookies.get("admin_token")?.value || req.headers.get("authorization")?.replace("Bearer ", "");
+    if (!token) return null;
+    const { payload } = await jwtVerify(token, SECRET);
+    return payload;
+  } catch { return null; }
+}
+const admin = await verifyAdmin(req);
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const [

@@ -15,62 +15,134 @@ import {
   bookAppointment,
 } from "@/lib/scheduler/calendar";
 
-async function handleScheduling(message: string, body: any, leadInfo: any) {
+// ================= SAVE MESSAGE =================
+async function saveMessage(
+  sessionId: string,
+  role: "user" | "bot",
+  content: string,
+  leadInfo?: any
+) {
+  await prisma.conversation.upsert({
+    where: { sessionId },
+    update: {
+      updatedAt: new Date(),
+      ...(leadInfo?.name && { userName: leadInfo.name }),
+      ...(leadInfo?.email && { userEmail: leadInfo.email }),
+      ...(leadInfo?.phone && { userPhone: leadInfo.phone }),
+      ...(role === "user" && { unread: { increment: 1 } }),
+    },
+    create: {
+      sessionId,
+      userName: leadInfo?.name || null,
+      userEmail: leadInfo?.email || null,
+      userPhone: leadInfo?.phone || null,
+      unread: role === "user" ? 1 : 0,
+    },
+  });
+
+  const conversation = await prisma.conversation.findUnique({
+    where: { sessionId },
+  });
+
+  if (conversation) {
+    await prisma.conversationMessage.create({
+      data: {
+        conversationId: conversation.id,
+        role,
+        content,
+      },
+    });
+  }
+}
+
+// ================= RESPONSE HELPER =================
+async function respond(
+  sessionId: string | undefined,
+  message: string,
+  reply: string,
+  leadInfo: any,
+  extra: any = {}
+) {
+  if (sessionId) {
+    await saveMessage(sessionId, "user", message, leadInfo);
+    await saveMessage(sessionId, "bot", reply, leadInfo);
+  }
+
+  return NextResponse.json({ reply, leadInfo, ...extra });
+}
+
+// ================= SCHEDULING =================
+async function handleScheduling(
+  message: string,
+  body: any,
+  leadInfo: any,
+  sessionId?: string
+) {
   const { schedulingStep, scheduleData = {} } = body;
   const input = message.trim().toLowerCase();
+  const dates = body.availableDates || getAvailableDates();
 
-  // Step 1 — Choose type
   if (schedulingStep === "choose_type") {
     if (input.includes("call")) {
-      const dates = getAvailableDates();
-      return NextResponse.json({
-        reply: `📞 Great! Let's book a call.\n\nAvailable dates:\n${dates.map((d, i) => `${i + 1}. ${d}`).join("\n")}\n\nReply with the number of your preferred date.`,
-        leadInfo,
+      const reply = `📞 Great! Let's book a call.\n\nAvailable dates:\n${dates
+        .map((d: any, i: number) => `${i + 1}. ${d}`)
+        .join("\n")}`;
+
+      return respond(sessionId, message, reply, leadInfo, {
         isScheduling: true,
         schedulingStep: "choose_date",
         scheduleData: { type: "CALL" },
         availableDates: dates,
       });
-    } else if (input.includes("visit")) {
-      const dates = getAvailableDates();
-      return NextResponse.json({
-        reply: `🏫 Great! Let's book a campus visit.\n\n📍 **Our Address:**\n${INSTITUTE_ADDRESS.name}\n${INSTITUTE_ADDRESS.address}\n🕐 ${INSTITUTE_ADDRESS.hours}\n\nAvailable dates:\n${dates.map((d, i) => `${i + 1}. ${d}`).join("\n")}\n\nReply with the number of your preferred date.`,
-        leadInfo,
+    }
+
+    if (input.includes("visit")) {
+      const reply = `🏫 Great! Let's book a campus visit.\n\n📍 ${INSTITUTE_ADDRESS.name}\n${INSTITUTE_ADDRESS.address}\n🕐 ${INSTITUTE_ADDRESS.hours}\n\nAvailable dates:\n${dates
+        .map((d: any, i: number) => `${i + 1}. ${d}`)
+        .join("\n")}`;
+
+      return respond(sessionId, message, reply, leadInfo, {
         isScheduling: true,
         schedulingStep: "choose_date",
         scheduleData: { type: "VISIT" },
         availableDates: dates,
       });
-    } else {
-      return NextResponse.json({
-        reply: `Please reply with **"call"** for a phone call or **"visit"** for a campus visit.`,
-        leadInfo,
-        isScheduling: true,
-        schedulingStep: "choose_type",
-      });
     }
+
+    return respond(
+      sessionId,
+      message,
+      `Reply with "call" or "visit".`,
+      leadInfo,
+      { isScheduling: true, schedulingStep: "choose_type" }
+    );
   }
 
-  // Step 2 — Choose date
   if (schedulingStep === "choose_date") {
-    const dates = body.availableDates || getAvailableDates();
     const index = parseInt(input) - 1;
 
     if (isNaN(index) || index < 0 || index >= dates.length) {
-      return NextResponse.json({
-        reply: `Please reply with a number between 1 and ${dates.length}.`,
+      return respond(
+        sessionId,
+        message,
+        `Choose between 1 and ${dates.length}.`,
         leadInfo,
-        isScheduling: true,
-        schedulingStep: "choose_date",
-        scheduleData,
-        availableDates: dates,
-      });
+        {
+          isScheduling: true,
+          schedulingStep: "choose_date",
+          scheduleData,
+          availableDates: dates,
+        }
+      );
     }
 
     const selectedDate = dates[index];
-    return NextResponse.json({
-      reply: `✅ Date selected: **${selectedDate}**\n\nAvailable time slots:\n${AVAILABLE_SLOTS.map((s, i) => `${i + 1}. ${s}`).join("\n")}\n\nReply with the number of your preferred time slot.`,
-      leadInfo,
+
+    const reply = `✅ Date: ${selectedDate}\n\nAvailable slots:\n${AVAILABLE_SLOTS.map(
+      (s, i) => `${i + 1}. ${s}`
+    ).join("\n")}`;
+
+    return respond(sessionId, message, reply, leadInfo, {
       isScheduling: true,
       schedulingStep: "choose_time",
       scheduleData: { ...scheduleData, date: selectedDate },
@@ -78,216 +150,199 @@ async function handleScheduling(message: string, body: any, leadInfo: any) {
     });
   }
 
-  // Step 3 — Choose time
   if (schedulingStep === "choose_time") {
     const index = parseInt(input) - 1;
 
     if (isNaN(index) || index < 0 || index >= AVAILABLE_SLOTS.length) {
-      return NextResponse.json({
-        reply: `Please reply with a number between 1 and ${AVAILABLE_SLOTS.length}.`,
+      return respond(
+        sessionId,
+        message,
+        `Choose between 1 and ${AVAILABLE_SLOTS.length}.`,
         leadInfo,
-        isScheduling: true,
-        schedulingStep: "choose_time",
-        scheduleData,
-        availableDates: body.availableDates,
-      });
+        {
+          isScheduling: true,
+          schedulingStep: "choose_time",
+          scheduleData,
+        }
+      );
     }
 
     const selectedTime = AVAILABLE_SLOTS[index];
 
     if (!leadInfo?.name || !leadInfo?.email || !leadInfo?.phone) {
-      return NextResponse.json({
-        reply: `Almost done! I just need your details to confirm the booking.\n\nWhat is your full name?`,
+      return respond(
+        sessionId,
+        message,
+        `Almost done! What's your full name?`,
         leadInfo,
-        isScheduling: true,
-        schedulingStep: "collect_info",
-        scheduleData: { ...scheduleData, time: selectedTime },
-        availableDates: body.availableDates,
-      });
+        {
+          isScheduling: true,
+          schedulingStep: "collect_info",
+          scheduleData: { ...scheduleData, time: selectedTime },
+        }
+      );
     }
 
     const result = await bookAppointment({
       ...scheduleData,
       time: selectedTime,
-      name: leadInfo.name,
-      email: leadInfo.email,
-      phone: leadInfo.phone,
-      course: leadInfo.course,
+      ...leadInfo,
     });
 
     if (!result.success) {
-      return NextResponse.json({
-        reply: `Sorry, that slot is already taken. Please choose another time.\n\n${AVAILABLE_SLOTS.map((s, i) => `${i + 1}. ${s}`).join("\n")}`,
+      return respond(
+        sessionId,
+        message,
+        `Slot taken. Choose another.`,
         leadInfo,
-        isScheduling: true,
-        schedulingStep: "choose_time",
-        scheduleData,
-        availableDates: body.availableDates,
-      });
+        { isScheduling: true, schedulingStep: "choose_time" }
+      );
     }
 
-    return NextResponse.json({
-      reply: `🎉 Appointment confirmed!\n\n📋 **Details:**\n👤 Name: ${leadInfo.name}\n📅 Date: ${scheduleData.date}\n🕐 Time: ${selectedTime}\n📞 Type: ${scheduleData.type === "CALL" ? "Phone Call" : "Campus Visit"}\n\nWe'll contact you at ${leadInfo.phone}. See you soon!`,
+    return respond(
+      sessionId,
+      message,
+      `🎉 Appointment confirmed!`,
       leadInfo,
-      isScheduling: false,
-      schedulingStep: null,
-      scheduleData: {},
-    });
+      { isScheduling: false }
+    );
   }
 
-  // Step 4 — Collect info
   if (schedulingStep === "collect_info") {
     const updatedLeadInfo = await extractLeadInfo(message, leadInfo);
     const next = getNextQuestion(updatedLeadInfo);
 
     if (next) {
-      return NextResponse.json({
-        reply: next,
-        leadInfo: updatedLeadInfo,
+      return respond(sessionId, message, next, updatedLeadInfo, {
         isScheduling: true,
         schedulingStep: "collect_info",
         scheduleData,
-        availableDates: body.availableDates,
       });
     }
 
     const result = await bookAppointment({
       ...scheduleData,
-      name: updatedLeadInfo.name!,
-      email: updatedLeadInfo.email!,
-      phone: updatedLeadInfo.phone!,
-      course: updatedLeadInfo.course,
+      ...updatedLeadInfo,
     });
 
     if (!result.success) {
-      return NextResponse.json({
-        reply: `Sorry, that slot is already taken. Please choose another time.`,
-        leadInfo: updatedLeadInfo,
-        isScheduling: true,
-        schedulingStep: "choose_time",
-        scheduleData,
-      });
+      return respond(
+        sessionId,
+        message,
+        `Slot taken. Choose another.`,
+        updatedLeadInfo,
+        { isScheduling: true, schedulingStep: "choose_time" }
+      );
     }
 
-    return NextResponse.json({
-      reply: `🎉 Appointment confirmed!\n\n📋 **Details:**\n👤 Name: ${updatedLeadInfo.name}\n📅 Date: ${scheduleData.date}\n🕐 Time: ${scheduleData.time}\n📞 Type: ${scheduleData.type === "CALL" ? "Phone Call" : "Campus Visit"}\n\nWe'll contact you at ${updatedLeadInfo.phone}. See you soon!`,
-      leadInfo: { ...updatedLeadInfo, collected: true },
-      isScheduling: false,
-      schedulingStep: null,
-      scheduleData: {},
-    });
+    return respond(
+      sessionId,
+      message,
+      `🎉 Appointment confirmed!`,
+      { ...updatedLeadInfo, collected: true },
+      { isScheduling: false }
+    );
   }
 
-  return NextResponse.json({
-    reply: "Something went wrong with scheduling.",
-    leadInfo,
-    isScheduling: false,
-  });
+  return respond(sessionId, message, "Scheduling error.", leadInfo);
 }
 
+// ================= MAIN API =================
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+
     const {
       message,
       leadInfo = {},
       isEnrolling = false,
       isScheduling = false,
+      sessionId, // ✅ ADDED
     } = body;
 
-    //  Handle scheduling flow first
+    // Scheduling
     if (isScheduling) {
-      return handleScheduling(message, body, leadInfo);
+      return handleScheduling(message, body, leadInfo, sessionId);
     }
 
-    //  Handle enrollment flow
-if (isEnrolling && !leadInfo.collected) {
-  const updatedLeadInfo: LeadInfo = await extractLeadInfo(message, leadInfo);
+    // Enrollment
+    if (isEnrolling && !leadInfo.collected) {
+      const updatedLeadInfo: LeadInfo = await extractLeadInfo(
+        message,
+        leadInfo
+      );
 
-  //  Ask for missing fields first before checking if complete
-  const nextQuestion = getNextQuestion(updatedLeadInfo);
+      const nextQuestion = getNextQuestion(updatedLeadInfo);
 
-  if (nextQuestion) {
-    return NextResponse.json({
-      reply: nextQuestion,
-      leadInfo: updatedLeadInfo,
-      isEnrolling: true,
-    });
-  }
+      if (nextQuestion) {
+        return respond(sessionId, message, nextQuestion, updatedLeadInfo, {
+          isEnrolling: true,
+        });
+      }
 
-  //  Only save when ALL fields are present
-  if (isLeadComplete(updatedLeadInfo)) {
-    await prisma.lead.create({
-      data: {
-        name: updatedLeadInfo.name!,
-        email: updatedLeadInfo.email!,
-        phone: updatedLeadInfo.phone!,
-        course: updatedLeadInfo.course!,
-      },
-    });
+      if (isLeadComplete(updatedLeadInfo)) {
+        await prisma.lead.create({
+          data: {
+            name: updatedLeadInfo.name!,
+            email: updatedLeadInfo.email!,
+            phone: updatedLeadInfo.phone!,
+            course: updatedLeadInfo.course!,
+          },
+        });
 
-    return NextResponse.json({
-      reply: `🎉 Thank you, ${updatedLeadInfo.name}! Your interest in the ${updatedLeadInfo.course} course has been registered. Our admissions team will contact you at ${updatedLeadInfo.phone} shortly!`,
-      leadInfo: { ...updatedLeadInfo, collected: true },
-      isEnrolling: false,
-    });
-  }
+        return respond(
+          sessionId,
+          message,
+          `🎉 Registered successfully!`,
+          { ...updatedLeadInfo, collected: true },
+          { isEnrolling: false }
+        );
+      }
+    }
 
-  //  Fallback — something still missing
-  return NextResponse.json({
-    reply: "Could you please provide the remaining details?",
-    leadInfo: updatedLeadInfo,
-    isEnrolling: true,
-  });
-}
-
-    // Detect intent
+    // Intent detection
     const intent = await detectIntent(message);
 
     if (intent === "greeting") {
-      return NextResponse.json({
-        reply: "👋 Hello! Welcome to our admissions portal. I can help you with course information or assist you with enrollment. What would you like to know?",
-        leadInfo,
-        isEnrolling: false,
-        isScheduling: false,
-      });
-    }
-
-    if (intent === "out_of_scope") {
-      return NextResponse.json({
-        reply: "I'm sorry, I can only assist with admission and course-related queries. Please contact our admissions team for other questions.",
-        leadInfo,
-        isEnrolling: false,
-        isScheduling: false,
-      });
+      return respond(
+        sessionId,
+        message,
+        "👋 Hello! How can I help you?",
+        leadInfo
+      );
     }
 
     if (intent === "interest") {
-      const updatedLeadInfo: LeadInfo = await extractLeadInfo(message, leadInfo);
+      const updatedLeadInfo = await extractLeadInfo(message, leadInfo);
       const nextQuestion = getNextQuestion(updatedLeadInfo);
-      return NextResponse.json({
-        reply: `Great! I'd love to help you with enrollment. ${nextQuestion}`,
-        leadInfo: updatedLeadInfo,
-        isEnrolling: true,
-        isScheduling: false,
-      });
+
+      return respond(
+        sessionId,
+        message,
+        `Great! ${nextQuestion}`,
+        updatedLeadInfo,
+        { isEnrolling: true }
+      );
     }
 
     if (intent === "schedule") {
-      const dates = getAvailableDates();
-      return NextResponse.json({
-        reply: `I can help you schedule an appointment! Would you like to:\n\n📞 **Book a Call** — Our admissions team will call you at your preferred time\n🏫 **Visit Campus** — Come visit us at our institute\n\nPlease reply with **"call"** or **"visit"** to proceed.`,
+      return respond(
+        sessionId,
+        message,
+        `Reply with "call" or "visit" to book.`,
         leadInfo,
-        isEnrolling: false,
-        isScheduling: true, 
-        schedulingStep: "choose_type",
-        availableDates: dates,
-      });
+        {
+          isScheduling: true,
+          schedulingStep: "choose_type",
+          availableDates: getAvailableDates(),
+        }
+      );
     }
 
-    // Default — FAQ
-    const reply = await getAIResponse(message);
-    return NextResponse.json({ reply, leadInfo, isEnrolling: false, isScheduling: false });
+    // Default AI response
+    const reply = await getAIResponse(message, leadInfo);
+
+    return respond(sessionId, message, reply, leadInfo);
 
   } catch (error) {
     console.error(error);

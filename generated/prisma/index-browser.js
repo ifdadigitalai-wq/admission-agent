@@ -174,6 +174,25 @@ exports.Prisma.AdminScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.ConversationScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  userName: 'userName',
+  userEmail: 'userEmail',
+  userPhone: 'userPhone',
+  unread: 'unread',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ConversationMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  role: 'role',
+  content: 'content',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -212,7 +231,9 @@ exports.Prisma.ModelName = {
   Faq: 'Faq',
   Lead: 'Lead',
   Appointment: 'Appointment',
-  Admin: 'Admin'
+  Admin: 'Admin',
+  Conversation: 'Conversation',
+  ConversationMessage: 'ConversationMessage'
 };
 
 /**

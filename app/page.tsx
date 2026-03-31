@@ -251,21 +251,27 @@ export default function ChatPage() {
   const activeSession = sessions.find((s) => s.id === activeSessionId) ?? null;
 
   // Called by ChatInner when messages update — keeps sidebar title fresh
-  const handleMessagesUpdate = (msgs: Message[], sessionId: string) => {
-    setSessions((prev) =>
-      prev.map((s) => {
-        if (s.id !== sessionId) return s;
-        // ✅ Update title from latest user message
-        const lastUser = [...msgs].reverse().find((m) => m.role === "user");
-        const title = lastUser
-          ? lastUser.content.length > 35
-            ? lastUser.content.slice(0, 35) + "…"
-            : lastUser.content
-          : s.title;
-        return { ...s, messages: msgs, title };
-      })
-    );
-  };
+  // In ChatPage.tsx shell component
+const handleMessagesUpdate = (msgs: Message[], sessionId: string, leadInfo?: any) => {
+  setSessions((prev) =>
+    prev.map((s) => {
+      if (s.id !== sessionId) return s;
+
+      // ✅ Use lead name if available, else use first user message
+      const name = leadInfo?.name;
+      const lastUser = [...msgs].reverse().find((m) => m.role === "user");
+      const title = name
+        ? `💬 ${name}`
+        : lastUser
+        ? lastUser.content.length > 35
+          ? lastUser.content.slice(0, 35) + "…"
+          : lastUser.content
+        : s.title;
+
+      return { ...s, messages: msgs, title };
+    })
+  );
+};
 
   const startNewChat = () => {
     // Create a new session entry

@@ -14,10 +14,12 @@ const PUBLIC_PATHS = [
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Allow public paths through
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }
 
+  // Protect /admin pages and /api/admin routes
   if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
     const cookieToken = req.cookies.get("admin_token")?.value;
     const headerToken = req.headers.get("authorization")?.replace("Bearer ", "");
@@ -31,7 +33,7 @@ export async function middleware(req: NextRequest) {
     }
 
     try {
-      await jwtVerify(token, SECRET); // ✅ Edge-compatible JWT verify
+      await jwtVerify(token, SECRET);
       return NextResponse.next();
     } catch {
       if (pathname.startsWith("/api/admin")) {

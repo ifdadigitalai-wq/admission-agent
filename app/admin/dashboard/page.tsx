@@ -161,6 +161,10 @@ export default function Dashboard() {
           {/* Nav */}
           <div className="nav-tabs">
             <button className="tab active">Overview</button>
+            <a href="/admin/conversations" className="tab" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+  💬 Conversations
+  {/* Show unread count if any */}
+</a>
             <a href="/admin" className="tab" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>Leads</a>
             <a href="/api/admin/leads/export" className="tab" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>Export CSV</a>
           </div>

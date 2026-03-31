@@ -81,3 +81,23 @@ model Admin {
   role      String   @default("admin")
   createdAt DateTime @default(now())
 }
+model Conversation {
+  id        String    @id @default(uuid())
+  sessionId String    @unique
+  userName  String?
+  userEmail String?
+  userPhone String?
+  messages  ConversationMessage[]
+  unread    Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model ConversationMessage {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  role           String       // "user" | "bot"
+  content        String
+  createdAt      DateTime     @default(now())
+}

@@ -4,7 +4,6 @@ import { prisma } from "../../lib/db/prisma";
 
 async function main() {
   await prisma.faq.createMany({
-        answer: "The Data Science course is 6 months long, covering Python, Machine Learning, and Data Visualization.",
 data: [
   // Short Term Courses
   { question: "What is the fee for the Basic Computer Courses?", answer: "The fee for the Basic Computer Courses is ₹8000." },

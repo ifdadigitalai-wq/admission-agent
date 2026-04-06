@@ -4,7 +4,9 @@ import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import useChat from "@/app/chatbot/hooks/useChat";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type Message = { role: "user" | "bot"; content: string };
+type Message = {
+  image?: any; role: "user" | "bot"; content: string
+};
 type Session = { id: string; title: string; messages: Message[]; time: string };
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -44,11 +46,7 @@ function formatTime(date: Date) {
 }
 
 const SUGGESTIONS = [
-  "What courses do you offer?",
-  "What are the fees?",
-  "I want to enroll",
-  "Book a campus visit",
-  "Schedule a call",
+  "🌟 Welcome to IFDA Institute – AI-Integrated Learning Starts Here 🚀\nAt IFDA Institute, every one of our 125+ programs is 100% AI-integrated.\nStudents don't just learn skills — they learn how to work with AI in real-world industry environments.\n\n🔹 100% Practical & Hands-On Training\n🔹 AI-Integrated Skill Development\n🔹 Industry-Aligned Curriculum\n🔹 ISO 9001:2015 Certified | NSDC Aligned\n\n🎓 Whether it's Accounts, IT, Data, Design, Marketing, or Business —\nAI is integrated into every course you learn at IFDA.\n\nTeam IFDA Institute ✨\nPowered by IFDA AI Gurukul"
 ];
 
 const CSS = `
@@ -98,14 +96,48 @@ const CSS = `
   .suggestions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
   .suggestion-chip { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 12.5px; font-family: var(--font); cursor: pointer; transition: border-color .2s, background .2s, transform .15s; }
   .suggestion-chip:hover { border-color: var(--accent); background: rgba(61,139,255,.08); transform: translateY(-2px); }
-  .msg-row { display: flex; gap: 10px; animation: fadeUp .3s ease both; }
-  .msg-row.user { flex-direction: row-reverse; }
+  .msg-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;     /* ✅ avatar aligns to bottom of bubble */
+  width: 100%;
+}
+.msg-row.user {
+  flex-direction: row-reverse;
+  justify-content: flex-start; /* ✅ keeps user bubble on right */
+}
   .avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
   .avatar.bot { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
   .avatar.user { background: var(--bubble-usr); color: var(--accent); border: 1px solid var(--border); }
-  .bubble { max-width: 78%; padding: 12px 16px; border-radius: var(--radius); font-size: 14px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
-  .bubble.bot { background: var(--bubble-bot); border: 1px solid var(--border); border-top-left-radius: 4px; color: var(--text); }
-  .bubble.user { background: var(--bubble-usr); border: 1px solid rgba(61,139,255,.25); border-top-right-radius: 4px; color: #d4e4ff; }
+  .bubble {
+  max-width: 65%;
+  min-width: 60px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+  .bubble.bot {
+  background: var(--bubble-bot);
+  border: 1px solid var(--border);
+  border-top-left-radius: 4px;
+  color: var(--text);
+  width: fit-content;        /* ✅ shrinks to content width */
+  max-width: 65%;
+}
+.bubble.user {
+  background: var(--bubble-usr);
+  border: 1px solid rgba(61,139,255,.25);
+  border-top-right-radius: 4px;
+  color: #d4e4ff;
+  width: fit-content;        /* ✅ shrinks to content width */
+  max-width: 65%;
+  margin-left: auto;         /* ✅ pushes to right side */
+}
   .typing-dots { display: flex; gap: 4px; align-items: center; padding: 4px 2px; }
   .typing-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: bounce 1.2s infinite; }
   .typing-dots span:nth-child(2) { animation-delay: .2s; }
@@ -195,25 +227,43 @@ function ChatInner({
               </div>
             </div>
           ) : (
-            displayed.map((msg, i) => (
-              <div key={i} className={`msg-row ${msg.role}`}>
-                <div className={`avatar ${msg.role}`}>
-                  {msg.role === "bot" ? <BotIcon /> : "U"}
+            <>
+              {displayed.map((msg, i) => (
+                <div key={i} className={`msg-row ${msg.role}`}>
+                  <div className={`avatar ${msg.role}`}>
+                    {msg.role === "bot" ? <BotIcon /> : "U"}
+                  </div>
+                  <div>
+                    {/* ✅ Show image above text if present */}
+                    {(msg as Message).image && (
+                      <img
+                        src={(msg as Message).image}
+                        alt="Welcome"
+                        style={{
+                          width: "100%",
+                          maxWidth: "360px",
+                          borderRadius: "12px",
+                          marginBottom: "8px",
+                          display: "block",
+                          border: "1px solid var(--border)",
+                        }}
+                      />
+                    )}
+                    <div className={`bubble ${msg.role}`}>{msg.content}</div>
+                  </div>
                 </div>
-                <div className={`bubble ${msg.role}`}>{msg.content}</div>
-              </div>
-            ))
-          )}
-          {loading && (
-            <div className="msg-row">
-              <div className="avatar bot"><BotIcon /></div>
-              <div className="bubble bot">
-                <div className="typing-dots"><span /><span /><span /></div>
-              </div>
-            </div>
-          )}
-          <div ref={bottomRef} />
-        </div>
+              ))}
+              {loading && (
+                <div className="msg-row">
+                  <div className="avatar bot"><BotIcon /></div>
+                  <div className="bubble bot">
+                    <div className="typing-dots"><span /><span /><span /></div>
+                  </div>
+                </div>
+              )}
+              <div ref={bottomRef} />
+            </>
+          )}</div>
       </div>
 
       <div className="input-area">
@@ -228,7 +278,8 @@ function ChatInner({
               onKeyDown={handleKeyDown}
             />
             <button className="send-btn" onClick={() => handleSend()}
-              disabled={!input.trim() || loading}>
+              disabled={!input.trim() || loading}
+            >
               <SendIcon />
             </button>
           </div>

@@ -45,6 +45,7 @@ model Lead {
   email     String
   phone     String
   course    String
+  source    String     @default("WEBSITE")
   status    LeadStatus @default(PENDING)
   notes     String?
   createdAt DateTime   @default(now())
@@ -103,4 +104,29 @@ model ConversationMessage {
   role           String // "user" | "bot"
   content        String
   createdAt      DateTime     @default(now())
+}
+
+model WhatsAppSession {
+  id             String   @id @default(uuid())
+  phone          String   @unique
+  leadInfo       Json     @default("{}")
+  isEnrolling    Boolean  @default(false)
+  isScheduling   Boolean  @default(false)
+  schedulingStep String?
+  scheduleData   Json     @default("{}")
+  availableDates Json     @default("[]")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  image       String // URL to course image
+  link        String // Course detail page URL
+  duration    String
+  fee         String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
 }

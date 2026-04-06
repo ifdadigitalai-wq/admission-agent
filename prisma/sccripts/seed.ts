@@ -5,62 +5,95 @@ import { prisma } from "../../lib/db/prisma";
 async function main() {
   await prisma.faq.createMany({
     data: [
-      // Data Science
-      {
-        question: "What is the duration of the Data Science course?",
-        answer: "The Data Science course is 6 months long, covering Python, Machine Learning, and Data Visualization.",
-      },
-      {
-        question: "What are the eligibility criteria for the Data Science program?",
-        answer: "Candidates must have a basic understanding of mathematics and statistics. A graduation degree is preferred.",
-      },
-      {
-        question: "What is the fee for the Data Science course?",
-        answer: "The Data Science course fee is ₹45,000 and includes all study materials and project guidance.",
-      },
+  // Short Term Courses
+  { question: "What is the fee for the Basic Computer Courses?", answer: "The fee for the Basic Computer Courses is ₹8000." },
+  { question: "What is the fee for the Advance Excel course?", answer: "The fee for the Advance Excel course is ₹6000." },
+  { question: "What is the fee for the Spoken English course?", answer: "The fee for the Spoken English course is ₹8000." },
+  { question: "What is the fee for the Certificate Course in Office Automation (CCOA)?", answer: "The fee is ₹12000." },
 
-      // Finance
-      {
-        question: "What topics are covered in the Finance course?",
-        answer: "The Finance course covers Financial Modeling, Investment Analysis, Stock Markets, and Corporate Finance.",
-      },
-      {
-        question: "Is the Finance course available online?",
-        answer: "Yes, the Finance course is available both online and offline. Online classes are held on weekends.",
-      },
-      {
-        question: "What is the fee for the Finance program?",
-        answer: "The Finance program fee is ₹35,000 which includes certifications and live project experience.",
-      },
+  // Diploma
+  { question: "What is the fee for the Diploma in Computer Applications (DCA)?", answer: "The fee is ₹20000." },
+  { question: "What is the fee for the Master Diploma in Computer Applications (MDCA)?", answer: "The fee is ₹25000." },
 
-      // Programming
-      {
-        question: "What programming languages are taught in the Programming course?",
-        answer: "We teach Python, JavaScript, Java, and C++. Students can choose a specialization track after the first month.",
-      },
-      {
-        question: "Is prior coding experience required for the Programming course?",
-        answer: "No prior experience is needed. We have beginner, intermediate, and advanced batches available.",
-      },
-      {
-        question: "What is the duration and fee of the Programming course?",
-        answer: "The Programming course is 4 months long with a fee of ₹25,000, including hands-on project work.",
-      },
+  // Programming
+  { question: "What is the fee for the Diploma in Programming?", answer: "The fee is ₹70000." },
+  { question: "What is the fee for the Python Core course?", answer: "The fee is ₹12000." },
+  { question: "What is the fee for the Python Advance course?", answer: "The fee is ₹15000." },
+  { question: "What is the fee for the Python with Machine Learning course?", answer: "The fee is ₹35000." },
+  { question: "What is the fee for the Python with Data Science course?", answer: "The fee is ₹50000." },
 
-      // General Admission
-      {
-        question: "What documents are required for admission?",
-        answer: "You need your last qualification marksheet, a government ID proof, and 2 passport-sized photographs.",
-      },
-      {
-        question: "What is the last date to apply?",
-        answer: "Admissions are open on a rolling basis. However, batch seats are limited so early registration is advised.",
-      },
-      {
-        question: "Is there an EMI option available for course fees?",
-        answer: "Yes, we offer 3, 6, and 12 month EMI options with 0% interest through our banking partners.",
-      },
-    ],
+  // Web Dev
+  { question: "What is the fee for the Website Designing course?", answer: "The fee is ₹25000." },
+  { question: "What is the fee for the Website Development course?", answer: "The fee is ₹25000." },
+  { question: "What is the fee for the IT-Genius course?", answer: "The fee is ₹45000." },
+  { question: "What is the fee for the Full Stack Development course?", answer: "The fee is ₹45000." },
+  { question: "What is the fee for the Mern Stack Development course?", answer: "The fee is ₹45000." },
+  { question: "What is the fee for the UI UX course?", answer: "The fee is ₹45000." },
+
+  // Multimedia
+  { question: "What is the fee for the Graphic Designing course?", answer: "The fee is ₹25000." },
+  { question: "What is the fee for the Graphic Designing Pro course?", answer: "The fee is ₹35000." },
+  { question: "What is the fee for the Video Editing course?", answer: "The fee is ₹25000." },
+
+  // Digital Marketing
+  { question: "What is the fee for the Certification in Digital Marketing?", answer: "The fee is ₹35000." },
+  { question: "What is the fee for the Master in Digital Marketing (MDM)?", answer: "The fee is ₹45000." },
+  { question: "What is the fee for the Diploma in Digital Marketing and Web Development?", answer: "The fee is ₹65000." },
+
+  // Accounting
+  { question: "What is the fee for TallyEssential Level 1 (Recording & Reporting)?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for TallyEssential Level 2 (Accounts Payable And Receivable)?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for TallyEssential Level 3 (Taxation And Compliance)?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for Tally E-Accounting?", answer: "The fee is ₹20000." },
+  { question: "What is the fee for Certification in Professional Accounting (CPA)?", answer: "The fee is ₹25000." },
+  { question: "What is the fee for Corporate E-Accounting?", answer: "The fee is ₹45000." },
+  { question: "What is the fee for Certification in Financial Accounting (CFA)?", answer: "The fee is ₹22000." },
+  { question: "What is the fee for Payroll?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for GST course?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for TDS course?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for Income Tax course?", answer: "The fee is ₹6000." },
+
+  // Data Analytics
+  { question: "What is the fee for Certification in Data Analytics?", answer: "The fee is ₹45000." },
+  { question: "What is the fee for Master in Data Analytics?", answer: "The fee is ₹65000." },
+
+  // Stock Market
+  { question: "What is the fee for Stock Market Course For Beginners?", answer: "The fee is ₹10000." },
+  { question: "What is the fee for Advance Options Strategies Course?", answer: "The fee is ₹15000." },
+  { question: "What is the fee for Advance Technical Analysis Course?", answer: "The fee is ₹18000." },
+  { question: "What is the fee for NISM Equity Derivative Series VIII?", answer: "The fee is ₹15000." },
+  { question: "What is the fee for Professional Stock Market Trading Course?", answer: "The fee is ₹35000." },
+  { question: "What is the fee for Diploma in Financial Market?", answer: "The fee is ₹65000." },
+  { question: "What is the fee for Advance Diploma in Financial Market?", answer: "The fee is ₹100000." },
+  { question: "What is the fee for NCFM Capital Market Course?", answer: "The fee is ₹10000." },
+  { question: "What is the fee for NCFM Fundamental Analysis Course?", answer: "The fee is ₹10000." },
+  { question: "What is the fee for NISM Commodity Market Course?", answer: "The fee is ₹8000." },
+  { question: "What is the fee for NISM Currency Market Course?", answer: "The fee is ₹8000." },
+
+  // Other Courses
+  { question: "What is the fee for Corel Draw course?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for Photoshop course?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for Indesign course?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for Illustrator course?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for Java Script course?", answer: "The fee is ₹6000." },
+  { question: "What is the fee for PHP Core course?", answer: "The fee is ₹10000 or ₹15000 depending on the batch." },
+  { question: "What is the fee for MySQL course?", answer: "The fee is ₹12000." },
+  { question: "What is the fee for Wordpress course?", answer: "The fee is ₹8000." },
+  { question: "What is the fee for C & C++ Combo course?", answer: "The fee is ₹15000." },
+  { question: "What is the fee for C course?", answer: "The fee is ₹10000." },
+  { question: "What is the fee for C++ course?", answer: "The fee is ₹10000." },
+  { question: "What is the fee for Core Java course?", answer: "The fee is ₹12000." },
+  { question: "What is the fee for Advance Java course?", answer: "The fee is ₹15000." },
+  { question: "What is the fee for VBA course?", answer: "The fee is ₹12000." },
+  { question: "What is the fee for React course?", answer: "The fee is ₹12000." },
+  { question: "What is the fee for Angular course?", answer: "The fee is ₹12000." },
+  { question: "What is the fee for Mongo DB course?", answer: "The fee is ₹12000." },
+
+  // General
+  { question: "What documents are required for admission?", answer: "You need your marksheet, ID proof, and photographs." },
+  { question: "Is EMI available?", answer: "Yes, EMI options are available." },
+  { question: "How to enroll?", answer: "You can enroll by contacting the institute." }
+],
   });
 
   console.log("✅ FAQs seeded successfully!");

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
 
-type Message = { role: "user" | "bot"; content: string };
+type Message = { role: "user" | "bot"; content: string, Image?: string  };
 type LeadInfo = {
   name?: string; email?: string; phone?: string;
   course?: string; collected?: boolean;
@@ -20,7 +20,27 @@ function getSessionId(): string {
 }
 
 export default function useChat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+const [messages, setMessages] = useState<Message[]>([
+  {
+    role: "bot",
+    Image: "C:\\Users\\pc\\Desktop\\idfa\\lib\\images\\idfa1.jpeg",
+    content: `🌟 Welcome to IFDA Institute – AI-Integrated Learning Starts Here 🚀
+
+At IFDA Institute, every one of our 125+ programs is 100% AI-integrated.
+Students don't just learn skills — they learn how to work with AI in real-world industry environments.
+
+🔹 100% Practical & Hands-On Training
+🔹 AI-Integrated Skill Development
+🔹 Industry-Aligned Curriculum
+🔹 ISO 9001:2015 Certified | NSDC Aligned
+
+🎓 Whether it's Accounts, IT, Data, Design, Marketing, or Business —
+AI is integrated into every course you learn at IFDA.
+
+Team IFDA Institute ✨
+Powered by IFDA AI Gurukul`,
+  },
+]);
   const [loading, setLoading] = useState(false);
   const [leadInfo, setLeadInfo] = useState<LeadInfo>({});
   const [isEnrolling, setIsEnrolling] = useState(false);
@@ -79,18 +99,40 @@ export default function useChat() {
   };
 
   // ✅ Reset session on new chat
-  const resetSession = () => {
-    const newId = `session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-    sessionStorage.setItem("chat_session_id", newId);
-    sessionId.current = newId;
-    setMessages([]);
-    setLeadInfo({});
-    setIsEnrolling(false);
-    setIsScheduling(false);
-    setSchedulingStep(null);
-    setScheduleData({});
-    setAvailableDates([]);
-  };
+ const resetSession = () => {
+  const newId = `session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  sessionStorage.setItem("chat_session_id", newId);
+  sessionId.current = newId;
+
+  // ✅ Reset with welcome message
+  setMessages([
+    {
+      role: "bot",
+      content: `🌟 Welcome to IFDA Institute – AI-Integrated Learning Starts Here 🚀
+
+At IFDA Institute, every one of our 125+ programs is 100% AI-integrated.
+Students don't just learn skills — they learn how to work with AI in real-world industry environments.
+
+🔹 100% Practical & Hands-On Training
+🔹 AI-Integrated Skill Development
+🔹 Industry-Aligned Curriculum
+🔹 ISO 9001:2015 Certified | NSDC Aligned
+
+🎓 Whether it's Accounts, IT, Data, Design, Marketing, or Business —
+AI is integrated into every course you learn at IFDA.
+
+Team IFDA Institute ✨
+Powered by IFDA AI Gurukul`,
+    },
+  ]);
+
+  setLeadInfo({});
+  setIsEnrolling(false);
+  setIsScheduling(false);
+  setSchedulingStep(null);
+  setScheduleData({});
+  setAvailableDates([]);
+};
 
   return {
     messages, sendMessage, loading, leadInfo,

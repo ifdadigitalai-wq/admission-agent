@@ -15,6 +15,15 @@ import {
   bookAppointment,
 } from "@/lib/scheduler/calendar";
 
+// ================= HARDCODED COURSES =================
+const COURSES = [
+  { id: "1", name: "AI & Machine Learning", description: "Learn AI and ML from scratch", duration: "6 months", fees: "₹45,000", order: 1 },
+  { id: "2", name: "Data Science", description: "Master data analysis and visualization", duration: "6 months", fees: "₹40,000", order: 2 },
+  { id: "3", name: "Full Stack Development", description: "Build modern web applications", duration: "6 months", fees: "₹35,000", order: 3 },
+  { id: "4", name: "Digital Marketing", description: "SEO, Social Media & Paid Ads", duration: "3 months", fees: "₹20,000", order: 4 },
+  { id: "5", name: "Cybersecurity", description: "Ethical hacking and network security", duration: "6 months", fees: "₹50,000", order: 5 },
+];
+
 // ================= SUGGESTIONS =================
 function getSuggestions(intent: string): string[] {
   switch (intent) {
@@ -37,7 +46,7 @@ function getSuggestions(intent: string): string[] {
       return ["📚 View Courses", "📋 Enroll Now", "📞 Schedule a Call", "🔙 Main Menu"];
     case "choose_date":
     case "choose_time":
-      return []; // ✅ user must type a number — no buttons
+      return [];
     default:
       return ["📚 View Courses", "📋 Enroll Now", "📞 Schedule a Call", "🔙 Main Menu"];
   }
@@ -80,7 +89,6 @@ async function saveMessage(
 }
 
 // ================= RESPOND HELPER =================
-// ✅ suggestions is now a required param so it's never forgotten
 async function respond(
   sessionId: string | undefined,
   message: string,
@@ -116,7 +124,7 @@ async function handleScheduling(
         schedulingStep: "choose_date",
         scheduleData: { type: "CALL" },
         availableDates: dates,
-      }, getSuggestions("choose_date")); // ✅ empty — user picks a number
+      }, getSuggestions("choose_date"));
     }
 
     if (input.includes("visit")) {
@@ -126,14 +134,14 @@ async function handleScheduling(
         schedulingStep: "choose_date",
         scheduleData: { type: "VISIT" },
         availableDates: dates,
-      }, getSuggestions("choose_date")); // ✅ empty
+      }, getSuggestions("choose_date"));
     }
 
     return respond(sessionId, message,
       `Please reply with "call" for a phone call or "visit" for a campus visit.`,
       leadInfo,
       { isScheduling: true, schedulingStep: "choose_type" },
-      getSuggestions("schedule") // ✅ show call/visit buttons again
+      getSuggestions("schedule")
     );
   }
 
@@ -145,7 +153,7 @@ async function handleScheduling(
         `Please reply with a number between 1 and ${dates.length}.`,
         leadInfo,
         { isScheduling: true, schedulingStep: "choose_date", scheduleData, availableDates: dates },
-        getSuggestions("choose_date") // ✅ empty
+        getSuggestions("choose_date")
       );
     }
 
@@ -157,7 +165,7 @@ async function handleScheduling(
       schedulingStep: "choose_time",
       scheduleData: { ...scheduleData, date: selectedDate },
       availableDates: dates,
-    }, getSuggestions("choose_time")); // ✅ empty
+    }, getSuggestions("choose_time"));
   }
 
   if (schedulingStep === "choose_time") {
@@ -168,7 +176,7 @@ async function handleScheduling(
         `Please reply with a number between 1 and ${AVAILABLE_SLOTS.length}.`,
         leadInfo,
         { isScheduling: true, schedulingStep: "choose_time", scheduleData },
-        getSuggestions("choose_time") // ✅ empty
+        getSuggestions("choose_time")
       );
     }
 
@@ -183,7 +191,7 @@ async function handleScheduling(
           schedulingStep: "collect_info",
           scheduleData: { ...scheduleData, time: selectedTime },
         },
-        [] // ✅ empty — collecting info
+        []
       );
     }
 
@@ -194,7 +202,7 @@ async function handleScheduling(
         `Sorry, that slot is already taken. Please choose another time.\n\n${AVAILABLE_SLOTS.map((s, i) => `${i + 1}. ${s}`).join("\n")}`,
         leadInfo,
         { isScheduling: true, schedulingStep: "choose_time", scheduleData },
-        getSuggestions("choose_time") // ✅ empty
+        getSuggestions("choose_time")
       );
     }
 
@@ -202,7 +210,7 @@ async function handleScheduling(
       `🎉 Appointment confirmed!\n\n📋 Details:\n👤 ${leadInfo.name}\n📅 ${scheduleData.date}\n🕐 ${selectedTime}\n📞 ${scheduleData.type === "CALL" ? "Phone Call" : "Campus Visit"}\n\nWe'll contact you at ${leadInfo.phone}. See you soon!`,
       leadInfo,
       { isScheduling: false, schedulingStep: null, scheduleData: {} },
-      getSuggestions("schedule_confirmed") // ✅
+      getSuggestions("schedule_confirmed")
     );
   }
 
@@ -215,7 +223,7 @@ async function handleScheduling(
         isScheduling: true,
         schedulingStep: "collect_info",
         scheduleData,
-      }, []); // ✅ empty — still collecting info
+      }, []);
     }
 
     const result = await bookAppointment({ ...scheduleData, ...updatedLeadInfo });
@@ -233,7 +241,7 @@ async function handleScheduling(
       `🎉 Appointment confirmed!\n\n📋 Details:\n👤 ${updatedLeadInfo.name}\n📅 ${scheduleData.date}\n🕐 ${scheduleData.time}\n📞 ${scheduleData.type === "CALL" ? "Phone Call" : "Campus Visit"}\n\nWe'll contact you at ${updatedLeadInfo.phone}. See you soon!`,
       { ...updatedLeadInfo, collected: true },
       { isScheduling: false, schedulingStep: null, scheduleData: {} },
-      getSuggestions("schedule_confirmed") // ✅
+      getSuggestions("schedule_confirmed")
     );
   }
 
@@ -244,8 +252,8 @@ async function handleScheduling(
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-  console.log("SessionId received:", body.sessionId); // ✅
-  console.log("Message:", body.message);
+    console.log("SessionId received:", body.sessionId);
+    console.log("Message:", body.message);
     const {
       message,
       leadInfo = {},
@@ -254,22 +262,19 @@ export async function POST(req: Request) {
       sessionId,
     } = body;
 
-    // ✅ Handle "Main Menu" button
     if (message === "Show me the main menu" || message === "🔙 Main Menu") {
       return respond(sessionId, message,
         "Here's what I can help you with! 😊",
         leadInfo,
         { isEnrolling: false, isScheduling: false },
-        getSuggestions("main_menu") // ✅ always shows 5 main buttons
+        getSuggestions("main_menu")
       );
     }
 
-    // ── Scheduling flow ──
     if (isScheduling) {
       return handleScheduling(message, body, leadInfo, sessionId);
     }
 
-    // ── Enrollment flow ──
     if (isEnrolling && !leadInfo.collected) {
       const updatedLeadInfo: LeadInfo = await extractLeadInfo(message, leadInfo);
       const nextQuestion = getNextQuestion(updatedLeadInfo);
@@ -277,7 +282,7 @@ export async function POST(req: Request) {
       if (nextQuestion) {
         return respond(sessionId, message, nextQuestion, updatedLeadInfo, {
           isEnrolling: true,
-        }, []); // ✅ empty — collecting info
+        }, []);
       }
 
       if (isLeadComplete(updatedLeadInfo)) {
@@ -294,12 +299,11 @@ export async function POST(req: Request) {
           `🎉 Thank you, ${updatedLeadInfo.name}! Your interest in the ${updatedLeadInfo.course} course has been registered. Our admissions team will contact you at ${updatedLeadInfo.phone} shortly!`,
           { ...updatedLeadInfo, collected: true },
           { isEnrolling: false },
-          getSuggestions("enrolled") // ✅
+          getSuggestions("enrolled")
         );
       }
     }
 
-    // ── Intent detection ──
     const intent = await detectIntent(message);
 
     if (intent === "greeting") {
@@ -307,17 +311,17 @@ export async function POST(req: Request) {
         "👋 Hello! Welcome to IFDA Institute — AI-Integrated Learning. I'm Priya, your admission counselor. How can I help you today?",
         leadInfo,
         { isEnrolling: false, isScheduling: false },
-        getSuggestions("greeting") // ✅
+        getSuggestions("greeting")
       );
     }
 
     if (intent === "courses") {
-      const courses = await prisma.course.findMany({ orderBy: { order: "asc" } });
+      // ✅ Using hardcoded courses instead of prisma.course.findMany()
       return respond(sessionId, message,
         "Here are our available courses! 🎓 Tap Interested to enroll or Know More to learn about a course:",
         leadInfo,
-        { isEnrolling: false, isScheduling: false, showCourses: true, courses },
-        getSuggestions("courses") // ✅
+        { isEnrolling: false, isScheduling: false, showCourses: true, courses: COURSES },
+        getSuggestions("courses")
       );
     }
 
@@ -326,7 +330,7 @@ export async function POST(req: Request) {
         "I'm sorry, I can only assist with admission and course-related queries. Please contact our admissions team for other questions.",
         leadInfo,
         { isEnrolling: false, isScheduling: false },
-        getSuggestions("out_of_scope") // ✅
+        getSuggestions("out_of_scope")
       );
     }
 
@@ -337,7 +341,7 @@ export async function POST(req: Request) {
         `Great! I'd love to help you with enrollment. ${nextQuestion}`,
         updatedLeadInfo,
         { isEnrolling: true, isScheduling: false },
-        getSuggestions("interest") // ✅
+        getSuggestions("interest")
       );
     }
 
@@ -346,16 +350,15 @@ export async function POST(req: Request) {
         `I can help you schedule an appointment!\n\nWould you like to:\n\n📞 Book a Call — Our admissions team will call you\n🏫 Visit Campus — Come visit us at our institute\n\nPlease reply with "call" or "visit" to proceed.`,
         leadInfo,
         { isEnrolling: false, isScheduling: true, schedulingStep: "choose_type", availableDates: getAvailableDates() },
-        getSuggestions("schedule") // ✅
+        getSuggestions("schedule")
       );
     }
 
-    // ── Default: FAQ ──
     const reply = await getAIResponse(message, leadInfo);
     return respond(sessionId, message, reply, leadInfo, {
       isEnrolling: false,
       isScheduling: false,
-    }, getSuggestions("faq")); // ✅
+    }, getSuggestions("faq"));
 
   } catch (error) {
     console.error(error);

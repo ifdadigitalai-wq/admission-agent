@@ -4,11 +4,7 @@ import { prisma } from "../../lib/db/prisma";
 async function main() {
   await prisma.faq.deleteMany();
   await prisma.faq.createMany({
-<<<<<<<<< Temporary merge branch 1
-data: [
-=========
     data: [
->>>>>>>>> Temporary merge branch 2
   // Short Term Courses
   { question: "What is the fee for the Basic Computer Courses?", answer: "The fee for the Basic Computer Courses is ₹8000." },
   { question: "What is the fee for the Advance Excel course?", answer: "The fee for the Advance Excel course is ₹6000." },

@@ -74,10 +74,12 @@ Classify the following user message into one of these intents:
 - "schedule" → user wants to book a call, schedule a meeting, visit campus, talk to someone, book appointment
 - "interest" → user wants to enroll, apply, register, or know how to join
 - "out_of_scope" → message is unrelated to education/admission
+- "view courses" → user is asking to see course offerings
 
+User message may contain multiple sentences. Classify based on the overall intent. If multiple intents are present, choose the one that seems most important.
 User message: "${message}"
 
-Reply with ONLY one word: greeting,schedule, faq, interest, or out_of_scope
+Reply with ONLY one word: greeting,schedule, faq, interest, view courses, or out_of_scope
 `;
 
   try {

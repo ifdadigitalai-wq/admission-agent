@@ -11,7 +11,8 @@ const PUBLIC_PATHS = [
   "/api/admin/auth/logout",
 ];
 
-export async function proxy(req: NextRequest) {
+// ✅ Change the name back to 'middleware'
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
@@ -44,6 +45,7 @@ export async function proxy(req: NextRequest) {
   return NextResponse.next();
 }
 
+// ✅ Keep the config export as is
 export const config = {
   matcher: ["/admin/:path*", "/api/admin/:path*"],
 };

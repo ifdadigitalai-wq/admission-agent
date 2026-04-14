@@ -11,15 +11,13 @@ const PUBLIC_PATHS = [
   "/api/admin/auth/logout",
 ];
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Allow public paths through
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }
 
-  // Protect /admin pages and /api/admin routes
   if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
     const cookieToken = req.cookies.get("admin_token")?.value;
     const headerToken = req.headers.get("authorization")?.replace("Bearer ", "");

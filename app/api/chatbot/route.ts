@@ -244,6 +244,8 @@ async function handleScheduling(
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+  console.log("SessionId received:", body.sessionId); // ✅
+  console.log("Message:", body.message);
     const {
       message,
       leadInfo = {},

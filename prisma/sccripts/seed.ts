@@ -4,12 +4,16 @@ import { prisma } from "../../lib/db/prisma";
 async function main() {
   await prisma.faq.deleteMany();
   await prisma.faq.createMany({
+<<<<<<<<< Temporary merge branch 1
+data: [
+=========
     data: [
-      // Short Term Courses
-      { question: "What is the fee for the Basic Computer Courses?", answer: "The fee for the Basic Computer Courses is ₹8000." },
-      { question: "What is the fee for the Advance Excel course?", answer: "The fee for the Advance Excel course is ₹6000." },
-      { question: "What is the fee for the Spoken English course?", answer: "The fee for the Spoken English course is ₹8000." },
-      { question: "What is the fee for the Certificate Course in Office Automation (CCOA)?", answer: "The fee is ₹12000." },
+>>>>>>>>> Temporary merge branch 2
+  // Short Term Courses
+  { question: "What is the fee for the Basic Computer Courses?", answer: "The fee for the Basic Computer Courses is ₹8000." },
+  { question: "What is the fee for the Advance Excel course?", answer: "The fee for the Advance Excel course is ₹6000." },
+  { question: "What is the fee for the Spoken English course?", answer: "The fee for the Spoken English course is ₹8000." },
+  { question: "What is the fee for the Certificate Course in Office Automation (CCOA)?", answer: "The fee is ₹12000." },
 
       // Diploma
       { question: "What is the fee for the Diploma in Computer Applications (DCA)?", answer: "The fee is ₹20000." },

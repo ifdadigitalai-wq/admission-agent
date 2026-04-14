@@ -210,7 +210,7 @@ const CSS = `
   }
 `;
 
-function ChatInner() {
+export function ChatInner() {
   const { messages, sendMessage, loading, suggestions, showCourses, courses } = useChat();
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);

@@ -146,7 +146,6 @@ exports.Prisma.LeadScalarFieldEnum = {
   email: 'email',
   phone: 'phone',
   course: 'course',
-  source: 'source',
   status: 'status',
   notes: 'notes',
   createdAt: 'createdAt',
@@ -194,38 +193,9 @@ exports.Prisma.ConversationMessageScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
-exports.Prisma.WhatsAppSessionScalarFieldEnum = {
-  id: 'id',
-  phone: 'phone',
-  leadInfo: 'leadInfo',
-  isEnrolling: 'isEnrolling',
-  isScheduling: 'isScheduling',
-  schedulingStep: 'schedulingStep',
-  scheduleData: 'scheduleData',
-  availableDates: 'availableDates',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.CourseScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  image: 'image',
-  link: 'link',
-  duration: 'duration',
-  fee: 'fee',
-  order: 'order',
-  createdAt: 'createdAt'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
-};
-
-exports.Prisma.JsonNullValueInput = {
-  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -236,12 +206,6 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
-};
-
-exports.Prisma.JsonNullValueFilter = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull,
-  AnyNull: Prisma.AnyNull
 };
 exports.LeadStatus = exports.$Enums.LeadStatus = {
   PENDING: 'PENDING',
@@ -269,9 +233,7 @@ exports.Prisma.ModelName = {
   Appointment: 'Appointment',
   Admin: 'Admin',
   Conversation: 'Conversation',
-  ConversationMessage: 'ConversationMessage',
-  WhatsAppSession: 'WhatsAppSession',
-  Course: 'Course'
+  ConversationMessage: 'ConversationMessage'
 };
 
 /**

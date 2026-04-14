@@ -21,7 +21,7 @@ async function verifyAdmin(req: NextRequest) {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> } // ✅ params is a Promise in Next.js 15
+  { params }: { params: { id: string } }
 ) {
   const admin = await verifyAdmin(req);
   if (!admin) {
@@ -29,10 +29,8 @@ export async function GET(
   }
 
   try {
-    const { id } = await params; // ✅ await params before accessing id
-
     const conversation = await prisma.conversation.findUnique({
-      where: { id },
+      where: { id: params.id },
       include: {
         messages: { orderBy: { createdAt: "asc" } },
       },
@@ -43,7 +41,7 @@ export async function GET(
     }
 
     await prisma.conversation.update({
-      where: { id },
+      where: { id: params.id },
       data: { unread: 0 },
     });
 

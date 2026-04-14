@@ -19,20 +19,19 @@ async function verifyAdmin(req: NextRequest) {
   }
 }
 
-// ✅ Updated type definition to only expect the Promise
-type RouteContext = {
-  params: Promise<{ id: string }>;
-};
-
-export async function GET(req: NextRequest, context: RouteContext) {
+// 1. Change the context type to be SYNCHRONOUS
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } } 
+) {
   const admin = await verifyAdmin(req);
   if (!admin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    // ✅ Use await directly on context.params
-    const { id } = await context.params;
+    // 2. Remove the 'await' from params
+    const { id } = params; 
 
     const conversation = await prisma.conversation.findUnique({
       where: { id },
@@ -60,15 +59,18 @@ export async function GET(req: NextRequest, context: RouteContext) {
   }
 }
 
-export async function DELETE(req: NextRequest, context: RouteContext) {
+// 3. Apply the same change to the DELETE handler
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const admin = await verifyAdmin(req);
   if (!admin)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  try {
-    // ✅ Use await directly on context.params
-    const { id } = await context.params;
+  const { id } = params; // No await here
 
+  try {
     await prisma.conversationMessage.deleteMany({
       where: { conversationId: id },
     });
@@ -79,7 +81,6 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Delete error:", error);
     return NextResponse.json({ error: "Delete failed" }, { status: 500 });
   }
 }

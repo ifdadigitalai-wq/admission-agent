@@ -15,6 +15,34 @@ import {
   bookAppointment,
 } from "@/lib/scheduler/calendar";
 
+// ================= SUGGESTIONS =================
+function getSuggestions(intent: string): string[] {
+  switch (intent) {
+    case "greeting":
+    case "main_menu":
+      return ["📚 View Courses", "💰 Check Fees", "📋 Enroll Now", "📞 Schedule a Call", "❓ Other Query"];
+    case "courses":
+      return ["💰 Check Fees", "📋 Enroll Now", "📞 Schedule a Call", "🔙 Main Menu"];
+    case "faq":
+      return ["📚 View Courses", "📋 Enroll Now", "📞 Schedule a Call", "🔙 Main Menu"];
+    case "interest":
+      return ["📞 Call me instead", "🏫 Visit Campus", "🔙 Main Menu"];
+    case "schedule":
+      return ["📞 Book a Call", "🏫 Visit Campus", "🔙 Main Menu"];
+    case "schedule_confirmed":
+      return ["📚 View Courses", "📋 Enroll Now", "🔙 Main Menu"];
+    case "enrolled":
+      return ["📚 View Courses", "📞 Schedule a Call", "🔙 Main Menu"];
+    case "out_of_scope":
+      return ["📚 View Courses", "📋 Enroll Now", "📞 Schedule a Call", "🔙 Main Menu"];
+    case "choose_date":
+    case "choose_time":
+      return []; // ✅ user must type a number — no buttons
+    default:
+      return ["📚 View Courses", "📋 Enroll Now", "📞 Schedule a Call", "🔙 Main Menu"];
+  }
+}
+
 // ================= SAVE MESSAGE =================
 async function saveMessage(
   sessionId: string,
@@ -46,29 +74,27 @@ async function saveMessage(
 
   if (conversation) {
     await prisma.conversationMessage.create({
-      data: {
-        conversationId: conversation.id,
-        role,
-        content,
-      },
+      data: { conversationId: conversation.id, role, content },
     });
   }
 }
 
-// ================= RESPONSE HELPER =================
+// ================= RESPOND HELPER =================
+// ✅ suggestions is now a required param so it's never forgotten
 async function respond(
   sessionId: string | undefined,
   message: string,
   reply: string,
   leadInfo: any,
-  extra: any = {}
+  extra: any = {},
+  suggestions: string[] = []
 ) {
   if (sessionId) {
     await saveMessage(sessionId, "user", message, leadInfo);
     await saveMessage(sessionId, "bot", reply, leadInfo);
   }
 
-  return NextResponse.json({ reply, leadInfo, ...extra });
+  return NextResponse.json({ reply, leadInfo, suggestions, ...extra });
 }
 
 // ================= SCHEDULING =================
@@ -84,37 +110,30 @@ async function handleScheduling(
 
   if (schedulingStep === "choose_type") {
     if (input.includes("call")) {
-      const reply = `📞 Great! Let's book a call.\n\nAvailable dates:\n${dates
-        .map((d: any, i: number) => `${i + 1}. ${d}`)
-        .join("\n")}`;
-
+      const reply = `📞 Great! Let's book a call.\n\nAvailable dates:\n${dates.map((d: string, i: number) => `${i + 1}. ${d}`).join("\n")}\n\nReply with the number of your preferred date.`;
       return respond(sessionId, message, reply, leadInfo, {
         isScheduling: true,
         schedulingStep: "choose_date",
         scheduleData: { type: "CALL" },
         availableDates: dates,
-      });
+      }, getSuggestions("choose_date")); // ✅ empty — user picks a number
     }
 
     if (input.includes("visit")) {
-      const reply = `🏫 Great! Let's book a campus visit.\n\n📍 ${INSTITUTE_ADDRESS.name}\n${INSTITUTE_ADDRESS.address}\n🕐 ${INSTITUTE_ADDRESS.hours}\n\nAvailable dates:\n${dates
-        .map((d: any, i: number) => `${i + 1}. ${d}`)
-        .join("\n")}`;
-
+      const reply = `🏫 Great! Let's book a campus visit.\n\n📍 ${INSTITUTE_ADDRESS.name}\n${INSTITUTE_ADDRESS.address}\n🕐 ${INSTITUTE_ADDRESS.hours}\n\nAvailable dates:\n${dates.map((d: string, i: number) => `${i + 1}. ${d}`).join("\n")}\n\nReply with the number of your preferred date.`;
       return respond(sessionId, message, reply, leadInfo, {
         isScheduling: true,
         schedulingStep: "choose_date",
         scheduleData: { type: "VISIT" },
         availableDates: dates,
-      });
+      }, getSuggestions("choose_date")); // ✅ empty
     }
 
-    return respond(
-      sessionId,
-      message,
-      `Reply with "call" or "visit".`,
+    return respond(sessionId, message,
+      `Please reply with "call" for a phone call or "visit" for a campus visit.`,
       leadInfo,
-      { isScheduling: true, schedulingStep: "choose_type" }
+      { isScheduling: true, schedulingStep: "choose_type" },
+      getSuggestions("schedule") // ✅ show call/visit buttons again
     );
   }
 
@@ -122,89 +141,68 @@ async function handleScheduling(
     const index = parseInt(input) - 1;
 
     if (isNaN(index) || index < 0 || index >= dates.length) {
-      return respond(
-        sessionId,
-        message,
-        `Choose between 1 and ${dates.length}.`,
+      return respond(sessionId, message,
+        `Please reply with a number between 1 and ${dates.length}.`,
         leadInfo,
-        {
-          isScheduling: true,
-          schedulingStep: "choose_date",
-          scheduleData,
-          availableDates: dates,
-        }
+        { isScheduling: true, schedulingStep: "choose_date", scheduleData, availableDates: dates },
+        getSuggestions("choose_date") // ✅ empty
       );
     }
 
     const selectedDate = dates[index];
-
-    const reply = `✅ Date: ${selectedDate}\n\nAvailable slots:\n${AVAILABLE_SLOTS.map(
-      (s, i) => `${i + 1}. ${s}`
-    ).join("\n")}`;
+    const reply = `✅ Date selected: ${selectedDate}\n\nAvailable time slots:\n${AVAILABLE_SLOTS.map((s, i) => `${i + 1}. ${s}`).join("\n")}\n\nReply with the number of your preferred time slot.`;
 
     return respond(sessionId, message, reply, leadInfo, {
       isScheduling: true,
       schedulingStep: "choose_time",
       scheduleData: { ...scheduleData, date: selectedDate },
       availableDates: dates,
-    });
+    }, getSuggestions("choose_time")); // ✅ empty
   }
 
   if (schedulingStep === "choose_time") {
     const index = parseInt(input) - 1;
 
     if (isNaN(index) || index < 0 || index >= AVAILABLE_SLOTS.length) {
-      return respond(
-        sessionId,
-        message,
-        `Choose between 1 and ${AVAILABLE_SLOTS.length}.`,
+      return respond(sessionId, message,
+        `Please reply with a number between 1 and ${AVAILABLE_SLOTS.length}.`,
         leadInfo,
-        {
-          isScheduling: true,
-          schedulingStep: "choose_time",
-          scheduleData,
-        }
+        { isScheduling: true, schedulingStep: "choose_time", scheduleData },
+        getSuggestions("choose_time") // ✅ empty
       );
     }
 
     const selectedTime = AVAILABLE_SLOTS[index];
 
     if (!leadInfo?.name || !leadInfo?.email || !leadInfo?.phone) {
-      return respond(
-        sessionId,
-        message,
-        `Almost done! What's your full name?`,
+      return respond(sessionId, message,
+        `Almost done! What is your full name?`,
         leadInfo,
         {
           isScheduling: true,
           schedulingStep: "collect_info",
           scheduleData: { ...scheduleData, time: selectedTime },
-        }
+        },
+        [] // ✅ empty — collecting info
       );
     }
 
-    const result = await bookAppointment({
-      ...scheduleData,
-      time: selectedTime,
-      ...leadInfo,
-    });
+    const result = await bookAppointment({ ...scheduleData, time: selectedTime, ...leadInfo });
 
     if (!result.success) {
-      return respond(
-        sessionId,
-        message,
-        `Slot taken. Choose another.`,
+      return respond(sessionId, message,
+        `Sorry, that slot is already taken. Please choose another time.\n\n${AVAILABLE_SLOTS.map((s, i) => `${i + 1}. ${s}`).join("\n")}`,
         leadInfo,
-        { isScheduling: true, schedulingStep: "choose_time" }
+        { isScheduling: true, schedulingStep: "choose_time", scheduleData },
+        getSuggestions("choose_time") // ✅ empty
       );
     }
 
-    return respond(
-      sessionId,
-      message,
-      `🎉 Appointment confirmed!`,
+    return respond(sessionId, message,
+      `🎉 Appointment confirmed!\n\n📋 Details:\n👤 ${leadInfo.name}\n📅 ${scheduleData.date}\n🕐 ${selectedTime}\n📞 ${scheduleData.type === "CALL" ? "Phone Call" : "Campus Visit"}\n\nWe'll contact you at ${leadInfo.phone}. See you soon!`,
       leadInfo,
-      { isScheduling: false }
+      { isScheduling: false, schedulingStep: null, scheduleData: {} },
+      getSuggestions("schedule_confirmed") // ✅
     );
   }
 
@@ -217,68 +215,67 @@ async function handleScheduling(
         isScheduling: true,
         schedulingStep: "collect_info",
         scheduleData,
-      });
+      }, []); // ✅ empty — still collecting info
     }
 
-    const result = await bookAppointment({
-      ...scheduleData,
-      ...updatedLeadInfo,
-    });
+    const result = await bookAppointment({ ...scheduleData, ...updatedLeadInfo });
 
     if (!result.success) {
-      return respond(
-        sessionId,
-        message,
-        `Slot taken. Choose another.`,
+      return respond(sessionId, message,
+        `Sorry, that slot is already taken. Please choose another time.`,
         updatedLeadInfo,
-        { isScheduling: true, schedulingStep: "choose_time" }
+        { isScheduling: true, schedulingStep: "choose_time" },
+        getSuggestions("choose_time")
       );
     }
 
-    return respond(
-      sessionId,
-      message,
-      `🎉 Appointment confirmed!`,
+    return respond(sessionId, message,
+      `🎉 Appointment confirmed!\n\n📋 Details:\n👤 ${updatedLeadInfo.name}\n📅 ${scheduleData.date}\n🕐 ${scheduleData.time}\n📞 ${scheduleData.type === "CALL" ? "Phone Call" : "Campus Visit"}\n\nWe'll contact you at ${updatedLeadInfo.phone}. See you soon!`,
       { ...updatedLeadInfo, collected: true },
-      { isScheduling: false }
+      { isScheduling: false, schedulingStep: null, scheduleData: {} },
+      getSuggestions("schedule_confirmed") // ✅
     );
   }
 
-  return respond(sessionId, message, "Scheduling error.", leadInfo);
+  return respond(sessionId, message, "Something went wrong with scheduling.", leadInfo, {}, getSuggestions("main_menu"));
 }
 
 // ================= MAIN API =================
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-  console.log("SessionId received:", body.sessionId); // ✅
-  console.log("Message:", body.message);
     const {
       message,
       leadInfo = {},
       isEnrolling = false,
       isScheduling = false,
-      sessionId, // ✅ ADDED
+      sessionId,
     } = body;
 
-    // Scheduling
+    // ✅ Handle "Main Menu" button
+    if (message === "Show me the main menu" || message === "🔙 Main Menu") {
+      return respond(sessionId, message,
+        "Here's what I can help you with! 😊",
+        leadInfo,
+        { isEnrolling: false, isScheduling: false },
+        getSuggestions("main_menu") // ✅ always shows 5 main buttons
+      );
+    }
+
+    // ── Scheduling flow ──
     if (isScheduling) {
       return handleScheduling(message, body, leadInfo, sessionId);
     }
 
-    // Enrollment
+    // ── Enrollment flow ──
     if (isEnrolling && !leadInfo.collected) {
-      const updatedLeadInfo: LeadInfo = await extractLeadInfo(
-        message,
-        leadInfo
-      );
-
+      const updatedLeadInfo: LeadInfo = await extractLeadInfo(message, leadInfo);
       const nextQuestion = getNextQuestion(updatedLeadInfo);
 
       if (nextQuestion) {
         return respond(sessionId, message, nextQuestion, updatedLeadInfo, {
           isEnrolling: true,
-        });
+        }, []); // ✅ empty — collecting info
       }
 
       if (isLeadComplete(updatedLeadInfo)) {
@@ -291,62 +288,75 @@ export async function POST(req: Request) {
           },
         });
 
-        return respond(
-          sessionId,
-          message,
-          `🎉 Registered successfully!`,
+        return respond(sessionId, message,
+          `🎉 Thank you, ${updatedLeadInfo.name}! Your interest in the ${updatedLeadInfo.course} course has been registered. Our admissions team will contact you at ${updatedLeadInfo.phone} shortly!`,
           { ...updatedLeadInfo, collected: true },
-          { isEnrolling: false }
+          { isEnrolling: false },
+          getSuggestions("enrolled") // ✅
         );
       }
     }
 
-    // Intent detection
+    // ── Intent detection ──
     const intent = await detectIntent(message);
 
     if (intent === "greeting") {
-      return respond(
-        sessionId,
-        message,
-        "👋 Hello! How can I help you?",
-        leadInfo
+      return respond(sessionId, message,
+        "👋 Hello! Welcome to IFDA Institute — AI-Integrated Learning. I'm Priya, your admission counselor. How can I help you today?",
+        leadInfo,
+        { isEnrolling: false, isScheduling: false },
+        getSuggestions("greeting") // ✅
+      );
+    }
+
+    if (intent === "courses") {
+      const courses = await prisma.course.findMany({ orderBy: { order: "asc" } });
+      return respond(sessionId, message,
+        "Here are our available courses! 🎓 Tap Interested to enroll or Know More to learn about a course:",
+        leadInfo,
+        { isEnrolling: false, isScheduling: false, showCourses: true, courses },
+        getSuggestions("courses") // ✅
+      );
+    }
+
+    if (intent === "out_of_scope") {
+      return respond(sessionId, message,
+        "I'm sorry, I can only assist with admission and course-related queries. Please contact our admissions team for other questions.",
+        leadInfo,
+        { isEnrolling: false, isScheduling: false },
+        getSuggestions("out_of_scope") // ✅
       );
     }
 
     if (intent === "interest") {
       const updatedLeadInfo = await extractLeadInfo(message, leadInfo);
       const nextQuestion = getNextQuestion(updatedLeadInfo);
-
-      return respond(
-        sessionId,
-        message,
-        `Great! ${nextQuestion}`,
+      return respond(sessionId, message,
+        `Great! I'd love to help you with enrollment. ${nextQuestion}`,
         updatedLeadInfo,
-        { isEnrolling: true }
+        { isEnrolling: true, isScheduling: false },
+        getSuggestions("interest") // ✅
       );
     }
 
     if (intent === "schedule") {
-      return respond(
-        sessionId,
-        message,
-        `Reply with "call" or "visit" to book.`,
+      return respond(sessionId, message,
+        `I can help you schedule an appointment!\n\nWould you like to:\n\n📞 Book a Call — Our admissions team will call you\n🏫 Visit Campus — Come visit us at our institute\n\nPlease reply with "call" or "visit" to proceed.`,
         leadInfo,
-        {
-          isScheduling: true,
-          schedulingStep: "choose_type",
-          availableDates: getAvailableDates(),
-        }
+        { isEnrolling: false, isScheduling: true, schedulingStep: "choose_type", availableDates: getAvailableDates() },
+        getSuggestions("schedule") // ✅
       );
     }
 
-    // Default AI response
+    // ── Default: FAQ ──
     const reply = await getAIResponse(message, leadInfo);
-
-    return respond(sessionId, message, reply, leadInfo);
+    return respond(sessionId, message, reply, leadInfo, {
+      isEnrolling: false,
+      isScheduling: false,
+    }, getSuggestions("faq")); // ✅
 
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Something went wrong" });
+    return NextResponse.json({ error: "Something went wrong", suggestions: [] });
   }
 }

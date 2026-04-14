@@ -14,165 +14,151 @@ type Lead = {
 };
 
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
   :root {
-    --bg: #0b0e14; --surface: #111520; --panel: #161c2a; --border: #1f2a3d;
-    --accent: #3d8bff; --accent2: #6c63ff; --text: #e2e8f4; --muted: #5a6a85;
-    --green: #34d399; --yellow: #f5c842; --red: #f87171; --orange: #fb923c;
-    --font: 'Sora', sans-serif; --mono: 'JetBrains Mono', monospace;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --panel: #f1f5f9;
+    --border: #e2e8f0;
+    --accent: #2563eb;
+    --text: #0f172a;
+    --muted: #64748b;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --font: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
   }
-  body { background: var(--bg); color: var(--text); font-family: var(--font); }
 
-  .page { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+
+  .page { min-height: 100vh; display: flex; flex-direction: column; }
 
   /* Topbar */
   .topbar {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 28px; background: var(--surface);
+    padding: 0 32px; height: 64px; background: var(--surface);
     border-bottom: 1px solid var(--border);
     position: sticky; top: 0; z-index: 50;
   }
   .topbar-left { display: flex; align-items: center; gap: 14px; }
-  .logo { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+  .logo { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: .05em; text-transform: uppercase; background: rgba(37, 99, 235, 0.05); padding: 4px 8px; border-radius: 4px; }
   .divider { width: 1px; height: 20px; background: var(--border); }
-  .page-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .page-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  
   .topbar-right { display: flex; align-items: center; gap: 10px; }
   .topbar-btn {
-    padding: 7px 14px; border-radius: 8px; font-family: var(--font);
-    font-size: 12px; cursor: pointer; transition: all .2s; text-decoration: none;
+    padding: 8px 16px; border-radius: 6px; font-family: var(--font);
+    font-size: 12px; font-weight: 500; cursor: pointer; transition: all .2s; text-decoration: none;
     display: inline-flex; align-items: center; gap: 6px;
   }
-  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
-  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #fff; }
-  .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+  .btn-outline { background: #fff; border: 1px solid var(--border); color: var(--muted); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: #f0f7ff; }
+  .btn-primary { background: var(--accent); border: none; color: #fff; }
+  .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
 
-  /* Content */
-  .content { padding: 28px; flex: 1; max-width: 1400px; margin: 0 auto; width: 100%; }
+  /* Content Container */
+  .content { padding: 40px 32px; flex: 1; max-width: 1440px; margin: 0 auto; width: 100%; }
 
-  /* Header row */
+  /* Header Section */
   .header-row {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+    margin-bottom: 24px;
   }
-  .header-left h1 { font-size: 20px; font-weight: 600; }
-  .header-left p { font-size: 12px; color: var(--muted); margin-top: 3px; font-family: var(--mono); }
+  .header-left h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .header-left p { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
-  /* Stats row */
-  .stats-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+  /* Enhanced Stats Row */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
   .stat-pill {
-    display: flex; align-items: center; gap: 8px;
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 16px;
+    border-radius: 12px; padding: 16px 20px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: transform 0.2s;
   }
-  .stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .stat-pill-label { font-size: 11px; color: var(--muted); font-family: var(--mono); }
-  .stat-pill-value { font-size: 15px; font-weight: 600; font-family: var(--mono); margin-left: 2px; }
+  .stat-pill:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+  .stat-pill-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-pill-value { font-size: 22px; font-weight: 700; color: var(--text); }
 
-  /* Search & filter */
-  .toolbar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  /* Search & Toolbar */
+  .toolbar { display: flex; gap: 12px; margin-bottom: 20px; }
   .search-box {
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 9px 14px; flex: 1; min-width: 200px;
-    transition: border-color .2s, box-shadow .2s;
+    border-radius: 8px; padding: 0 16px; flex: 1;
+    transition: all .2s; height: 42px;
   }
-  .search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(61,139,255,.1); }
-  .search-box input { background: none; border: none; outline: none; font-family: var(--font); font-size: 13px; color: var(--text); width: 100%; }
-  .search-box input::placeholder { color: var(--muted); }
+  .search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.06); }
+  .search-box input { background: none; border: none; outline: none; font-family: var(--font); font-size: 14px; color: var(--text); width: 100%; }
+  
   .filter-select {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-    padding: 9px 14px; font-family: var(--font); font-size: 13px; color: var(--text);
-    outline: none; cursor: pointer; transition: border-color .2s;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0 16px; font-family: var(--font); font-size: 13px; color: var(--text);
+    outline: none; cursor: pointer; height: 42px; min-width: 160px;
   }
-  .filter-select:focus { border-color: var(--accent); }
 
-  /* Table */
+  /* Table Design */
   .table-wrap {
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden;
+    border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
   table { width: 100%; border-collapse: collapse; }
-  thead { background: var(--panel); }
+  thead { background: #fafafa; }
   th {
-    padding: 12px 16px; font-size: 10px; color: var(--muted);
-    font-family: var(--mono); text-transform: uppercase; letter-spacing: .08em;
-    text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap;
+    padding: 12px 20px; font-size: 11px; color: var(--muted);
+    font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
+    text-align: left; border-bottom: 1px solid var(--border);
   }
-  td {
-    padding: 13px 16px; font-size: 13px;
-    border-bottom: 1px solid rgba(31,42,61,.6);
-    vertical-align: middle;
-  }
+  td { padding: 16px 20px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
-  tbody tr { transition: background .15s; }
-  tbody tr:hover td { background: var(--panel); }
+  tbody tr:hover td { background: #fcfcfd; }
 
-  .name-cell .name { font-weight: 500; color: var(--text); }
-  .name-cell .email { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: var(--mono); }
+  /* Cells */
+  .name-cell .name { font-weight: 600; color: var(--text); }
+  .name-cell .email { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .phone-cell { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-  .course-cell { font-size: 12px; color: var(--text); }
-  .date-cell { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .course-cell { font-weight: 500; font-size: 13px; }
+  .date-cell { font-size: 12px; color: var(--muted); }
 
-  /* Badge */
-  .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 10px; font-family: var(--mono); font-weight: 500; white-space: nowrap; }
-  .badge-PENDING   { background: rgba(245,200,66,.1);  color: var(--yellow); border: 1px solid rgba(245,200,66,.2); }
-  .badge-CONTACTED { background: rgba(61,139,255,.1);  color: var(--accent); border: 1px solid rgba(61,139,255,.2); }
-  .badge-CONVERTED { background: rgba(52,211,153,.1);  color: var(--green);  border: 1px solid rgba(52,211,153,.2); }
-  .badge-REJECTED  { background: rgba(248,113,113,.1); color: var(--red);    border: 1px solid rgba(248,113,113,.2); }
+  /* Badges */
+  .badge { 
+    display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; 
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em; 
+  }
+  .badge-PENDING   { background: #fffbeb; color: #92400e; }
+  .badge-CONTACTED { background: #eff6ff; color: #1e40af; }
+  .badge-CONVERTED { background: #ecfdf5; color: #065f46; }
+  .badge-REJECTED  { background: #fef2f2; color: #991b1b; }
 
-  /* Status select */
+  /* Inline Inputs */
   .status-select {
-    background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
-    padding: 5px 8px; font-family: var(--mono); font-size: 11px; color: var(--text);
-    outline: none; cursor: pointer; transition: border-color .2s;
+    background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 10px; font-family: var(--font); font-size: 12px; color: var(--text);
+    outline: none; cursor: pointer; font-weight: 500;
   }
-  .status-select:focus { border-color: var(--accent); }
-
-  /* Notes input */
   .notes-input {
-    background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
-    padding: 5px 10px; font-family: var(--font); font-size: 12px; color: var(--text);
-    outline: none; width: 100%; min-width: 120px; transition: border-color .2s;
+    background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 12px; font-family: var(--font); font-size: 12px; color: var(--text);
+    outline: none; width: 100%; transition: all .2s;
   }
-  .notes-input:focus { border-color: var(--accent); }
-  .notes-input::placeholder { color: var(--muted); }
+  .notes-input:focus { border-color: var(--accent); background: #fff; }
 
-  /* Empty state */
-  .empty {
-    text-align: center; padding: 60px 20px; color: var(--muted);
-  }
-  .empty-icon { font-size: 36px; margin-bottom: 12px; }
-  .empty p { font-size: 14px; }
-
-  /* Loading */
-  .loading {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 60vh; color: var(--muted); font-family: var(--mono); font-size: 13px; gap: 10px;
-  }
-  .spinner {
-    width: 18px; height: 18px; border: 2px solid var(--border);
-    border-top-color: var(--accent); border-radius: 50%;
-    animation: spin .6s linear infinite;
-  }
+  /* Utilities */
+  .empty { text-align: center; padding: 80px 20px; color: var(--muted); background: #fff; }
+  .loading { display: flex; align-items: center; justify-content: center; min-height: 80vh; font-weight: 500; color: var(--muted); gap: 12px; }
+  .spinner { width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Toast */
   .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: var(--surface); border: 1px solid var(--green);
-    border-radius: 10px; padding: 10px 20px; font-size: 13px; color: var(--green);
-    font-family: var(--mono); z-index: 999; box-shadow: 0 8px 32px rgba(0,0,0,.4);
-    animation: slideUp .3s ease;
+    position: fixed; bottom: 32px; right: 32px;
+    background: #0f172a; color: #fff; border-radius: 8px;
+    padding: 12px 24px; font-size: 14px; font-weight: 500;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15); animation: slideIn .3s ease;
   }
-  @keyframes slideUp { from{opacity:0;transform:translateX(-50%) translateY(10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
-
-  @media (max-width: 768px) {
-    .content { padding: 16px; }
-    .stats-row { gap: 8px; }
-    td, th { padding: 10px 12px; }
-  }
+  @keyframes slideIn { from{opacity:0; transform: translateY(20px)} to{opacity:1; transform: translateY(0)} }
 `;
 
 export default function AdminLeadsPage() {
@@ -202,12 +188,12 @@ export default function AdminLeadsPage() {
       body: JSON.stringify({ status, notes }),
     });
     setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status, notes } : l)));
-    showToast("✅ Lead updated");
+    showToast("Lead updated successfully");
   };
 
   const showToast = (msg: string) => {
     setToast(msg);
-    setTimeout(() => setToast(""), 2500);
+    setTimeout(() => setToast(""), 3000);
   };
 
   const filtered = leads.filter((l) => {
@@ -219,7 +205,6 @@ export default function AdminLeadsPage() {
     return matchSearch && matchStatus;
   });
 
-  // Stats
   const counts = {
     total: leads.length,
     pending: leads.filter((l) => l.status === "PENDING").length,
@@ -231,7 +216,7 @@ export default function AdminLeadsPage() {
   if (loading) return (
     <>
       <style>{CSS}</style>
-      <div className="loading"><div className="spinner" /> Loading leads…</div>
+      <div className="loading"><div className="spinner" /> Synchronizing Leads…</div>
     </>
   );
 
@@ -239,57 +224,50 @@ export default function AdminLeadsPage() {
     <>
       <style>{CSS}</style>
       <div className="page">
-
-        {/* Topbar */}
         <div className="topbar">
           <div className="topbar-left">
-            <span className="logo">IDFA.AI</span>
+            <span className="logo">IDFA</span>
             <div className="divider" />
             <span className="page-title">Lead Management</span>
           </div>
           <div className="topbar-right">
-            <a href="/admin/dashboard" className="topbar-btn btn-outline">← Dashboard</a>
+            <a href="/admin/dashboard" className="topbar-btn btn-outline">Back to Dashboard</a>
             <a href="/api/admin/leads/export" className="topbar-btn btn-primary" download>
-              ⬇ Export CSV
+              Export Dataset
             </a>
           </div>
         </div>
 
         <div className="content">
-
-          {/* Header */}
           <div className="header-row">
             <div className="header-left">
-              <h1>All Leads</h1>
-              <p>{counts.total} total · {counts.converted} converted</p>
+              <h1>Inbound Leads</h1>
+              <p>Managing {counts.total} prospects across the enrollment funnel</p>
             </div>
           </div>
 
-          {/* Stats pills */}
           <div className="stats-row">
             {[
-              { label: "Total", value: counts.total, color: "#3d8bff" },
-              { label: "Pending", value: counts.pending, color: "#f5c842" },
-              { label: "Contacted", value: counts.contacted, color: "#3d8bff" },
-              { label: "Converted", value: counts.converted, color: "#34d399" },
-              { label: "Rejected", value: counts.rejected, color: "#f87171" },
+              { label: "Total Leads", value: counts.total, color: "var(--accent)" },
+              { label: "Pipeline", value: counts.pending, color: "var(--warning)" },
+              { label: "Active", value: counts.contacted, color: "var(--accent)" },
+              { label: "Conversions", value: counts.converted, color: "var(--success)" },
+              { label: "Closed", value: counts.rejected, color: "var(--danger)" },
             ].map((s) => (
               <div key={s.label} className="stat-pill">
-                <div className="stat-dot" style={{ background: s.color }} />
                 <span className="stat-pill-label">{s.label}</span>
                 <span className="stat-pill-value" style={{ color: s.color }}>{s.value}</span>
               </div>
             ))}
           </div>
 
-          {/* Toolbar */}
           <div className="toolbar">
             <div className="search-box">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5a6a85" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
               <input
-                placeholder="Search by name, email or course…"
+                placeholder="Search candidates by name, email or course…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -299,26 +277,25 @@ export default function AdminLeadsPage() {
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <option value="ALL">All Status</option>
-              <option value="PENDING">Pending</option>
-              <option value="CONTACTED">Contacted</option>
-              <option value="CONVERTED">Converted</option>
-              <option value="REJECTED">Rejected</option>
+              <option value="ALL">All Lifecycle Stages</option>
+              <option value="PENDING">Pending Inquiries</option>
+              <option value="CONTACTED">Currently Contacted</option>
+              <option value="CONVERTED">Enrollment Converted</option>
+              <option value="REJECTED">Inquiry Rejected</option>
             </select>
           </div>
 
-          {/* Table */}
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Lead</th>
-                  <th>Phone</th>
-                  <th>Course</th>
+                  <th>Prospect</th>
+                  <th>Channel</th>
+                  <th>Interest Area</th>
                   <th>Status</th>
-                  <th>Update Status</th>
-                  <th>Notes</th>
-                  <th>Date</th>
+                  <th>Action</th>
+                  <th>Internal Notes</th>
+                  <th>Recorded</th>
                 </tr>
               </thead>
               <tbody>
@@ -352,12 +329,12 @@ export default function AdminLeadsPage() {
                         className="notes-input"
                         defaultValue={lead.notes || ""}
                         onBlur={(e) => updateLead(lead.id, lead.status, e.target.value)}
-                        placeholder="Add note…"
+                        placeholder="Click to add note…"
                       />
                     </td>
                     <td className="date-cell">
                       {new Date(lead.createdAt).toLocaleDateString("en-IN", {
-                        day: "numeric", month: "short", year: "numeric"
+                        day: "2-digit", month: "short", year: "numeric"
                       })}
                     </td>
                   </tr>
@@ -367,12 +344,10 @@ export default function AdminLeadsPage() {
 
             {filtered.length === 0 && (
               <div className="empty">
-                <div className="empty-icon">🔍</div>
-                <p>{search || statusFilter !== "ALL" ? "No leads match your filters." : "No leads yet."}</p>
+                <p>{search || statusFilter !== "ALL" ? "No records match these criteria." : "Lead ledger is currently empty."}</p>
               </div>
             )}
           </div>
-
         </div>
       </div>
 

@@ -1,14 +1,31 @@
 "use client";
 
-import { useState, useRef, useEffect, KeyboardEvent } from "react";
+import { useState, useRef } from "react";
 
-type Message = { role: "user" | "bot"; content: string, Image?: string  };
-type LeadInfo = {
-  name?: string; email?: string; phone?: string;
-  course?: string; collected?: boolean;
+type Message = {
+  role: "user" | "bot";
+  content: string;
+  image?: string; // Standardized to lowercase 'image' for consistency
 };
 
-// ✅ Generate a unique session ID per browser tab
+type LeadInfo = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  course?: string;
+  collected?: boolean;
+};
+
+type Course = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  link: string;
+  duration: string;
+  fee: string;
+};
+
 function getSessionId(): string {
   if (typeof window === "undefined") return "";
   let id = sessionStorage.getItem("chat_session_id");
@@ -20,27 +37,7 @@ function getSessionId(): string {
 }
 
 export default function useChat() {
-const [messages, setMessages] = useState<Message[]>([
-  {
-    role: "bot",
-    Image: "C:\\Users\\pc\\Desktop\\idfa\\lib\\images\\idfa1.jpeg",
-    content: `🌟 Welcome to IFDA Institute – AI-Integrated Learning Starts Here 🚀
-
-At IFDA Institute, every one of our 125+ programs is 100% AI-integrated.
-Students don't just learn skills — they learn how to work with AI in real-world industry environments.
-
-🔹 100% Practical & Hands-On Training
-🔹 AI-Integrated Skill Development
-🔹 Industry-Aligned Curriculum
-🔹 ISO 9001:2015 Certified | NSDC Aligned
-
-🎓 Whether it's Accounts, IT, Data, Design, Marketing, or Business —
-AI is integrated into every course you learn at IFDA.
-
-Team IFDA Institute ✨
-Powered by IFDA AI Gurukul`,
-  },
-]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [leadInfo, setLeadInfo] = useState<LeadInfo>({});
   const [isEnrolling, setIsEnrolling] = useState(false);
@@ -48,7 +45,16 @@ Powered by IFDA AI Gurukul`,
   const [schedulingStep, setSchedulingStep] = useState<string | null>(null);
   const [scheduleData, setScheduleData] = useState<any>({});
   const [availableDates, setAvailableDates] = useState<string[]>([]);
-  const sessionId = useRef(getSessionId()); // ✅ stable across renders
+  const [suggestions, setSuggestions] = useState<string[]>([
+    "📚 View Courses",
+    "💰 Check Fees",
+    "📋 Enroll Now",
+    "📞 Schedule a Call",
+  ]);
+  const [showCourses, setShowCourses] = useState(false);
+  const [courses, setCourses] = useState<Course[]>([]);
+
+  const sessionId = useRef(getSessionId());
 
   const sendMessage = async (input: string) => {
     if (!input.trim()) return;
@@ -69,9 +75,11 @@ Powered by IFDA AI Gurukul`,
           schedulingStep,
           scheduleData,
           availableDates,
-          sessionId: sessionId.current, // ✅ send session ID
+          sessionId: sessionId.current,
         }),
       });
+
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
       const data = await res.json();
 
@@ -81,62 +89,55 @@ Powered by IFDA AI Gurukul`,
       if (data.schedulingStep !== undefined) setSchedulingStep(data.schedulingStep);
       if (data.scheduleData) setScheduleData(data.scheduleData);
       if (data.availableDates) setAvailableDates(data.availableDates);
+      if (data.suggestions) setSuggestions(data.suggestions);
+      if (typeof data.showCourses === "boolean") setShowCourses(data.showCourses);
+      if (data.courses) setCourses(data.courses);
 
       const botMessage: Message = {
         role: "bot",
-        content: data.reply || "Something went wrong.",
+        content: data.reply || "I'm sorry, I couldn't process that.",
       };
+
       setMessages((prev) => [...prev, botMessage]);
     } catch (err) {
       console.error(err);
       setMessages((prev) => [
         ...prev,
-        { role: "bot", content: "Something went wrong. Please try again." },
+        { role: "bot", content: "I'm having trouble connecting. Please try again later." },
       ]);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Reset session on new chat
- const resetSession = () => {
-  const newId = `session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-  sessionStorage.setItem("chat_session_id", newId);
-  sessionId.current = newId;
-
-  // ✅ Reset with welcome message
-  setMessages([
-    {
-      role: "bot",
-      content: `🌟 Welcome to IFDA Institute – AI-Integrated Learning Starts Here 🚀
-
-At IFDA Institute, every one of our 125+ programs is 100% AI-integrated.
-Students don't just learn skills — they learn how to work with AI in real-world industry environments.
-
-🔹 100% Practical & Hands-On Training
-🔹 AI-Integrated Skill Development
-🔹 Industry-Aligned Curriculum
-🔹 ISO 9001:2015 Certified | NSDC Aligned
-
-🎓 Whether it's Accounts, IT, Data, Design, Marketing, or Business —
-AI is integrated into every course you learn at IFDA.
-
-Team IFDA Institute ✨
-Powered by IFDA AI Gurukul`,
-    },
-  ]);
-
-  setLeadInfo({});
-  setIsEnrolling(false);
-  setIsScheduling(false);
-  setSchedulingStep(null);
-  setScheduleData({});
-  setAvailableDates([]);
-};
+  const resetSession = () => {
+    const newId = `session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    sessionStorage.setItem("chat_session_id", newId);
+    sessionId.current = newId;
+    setMessages([]);
+    setLeadInfo({});
+    setIsEnrolling(false);
+    setIsScheduling(false);
+    setSchedulingStep(null);
+    setScheduleData({});
+    setAvailableDates([]);
+    setSuggestions(["📚 View Courses", "💰 Check Fees", "📋 Enroll Now", "📞 Schedule a Call"]);
+    setShowCourses(false);
+    setCourses([]);
+  };
 
   return {
-    messages, sendMessage, loading, leadInfo,
-    isEnrolling, isScheduling, schedulingStep,
-    scheduleData, resetSession,
+    messages,
+    sendMessage,
+    loading,
+    leadInfo,
+    isEnrolling,
+    isScheduling,
+    schedulingStep,
+    scheduleData,
+    resetSession,
+    suggestions,
+    showCourses,
+    courses,
   };
 }

@@ -53,3 +53,17 @@ export async function GET(
     return NextResponse.json({ error: "Failed to fetch conversation" }, { status: 500 });
   }
 }
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const admin = await verifyAdmin(req);
+  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { id } = await params;
+
+  await prisma.conversationMessage.deleteMany({ where: { conversationId: id } });
+  await prisma.conversation.delete({ where: { id } });
+
+  return NextResponse.json({ success: true });
+}

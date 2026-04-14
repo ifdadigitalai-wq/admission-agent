@@ -13,18 +13,32 @@ async function verifyAdmin(req: NextRequest) {
   } catch { return null; }
 }
 
-export async function GET(req: NextRequest) {
+// ✅ Add the second 'context' parameter, even if empty, to satisfy the RouteHandler type
+export async function GET(
+  req: NextRequest, 
+  context: any // Adding this satisfies the strict Type Check in Next.js 16
+) {
   const admin = await verifyAdmin(req);
+  
+  // Basic Auth Check
+  if (!admin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  const conversations = await prisma.conversation.findMany({
-    orderBy: { updatedAt: "desc" },
-    include: {
-      messages: {
-        orderBy: { createdAt: "desc" },
-        take: 1, // last message preview
+  try {
+    const conversations = await prisma.conversation.findMany({
+      orderBy: { updatedAt: "desc" },
+      include: {
+        messages: {
+          orderBy: { createdAt: "desc" },
+          take: 1, 
+        },
       },
-    },
-  });
+    });
 
-  return NextResponse.json(conversations);
+    return NextResponse.json(conversations);
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
+  }
 }

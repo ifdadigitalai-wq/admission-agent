@@ -19,18 +19,20 @@ async function verifyAdmin(req: NextRequest) {
   }
 }
 
-export async function GET(
-  req: NextRequest,
-  context: { params: { id: string } } | { params: Promise<{ id: string }> }
-) {
+// ✅ Updated type definition to only expect the Promise
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
+export async function GET(req: NextRequest, context: RouteContext) {
   const admin = await verifyAdmin(req);
   if (!admin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    // ✅ FIX: resolve params safely
-    const { id } = await Promise.resolve(context.params);
+    // ✅ Use await directly on context.params
+    const { id } = await context.params;
 
     const conversation = await prisma.conversation.findUnique({
       where: { id },
@@ -58,24 +60,26 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { id: string } } | { params: Promise<{ id: string }> }
-) {
+export async function DELETE(req: NextRequest, context: RouteContext) {
   const admin = await verifyAdmin(req);
   if (!admin)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  // ✅ FIX: same handling as GET
-  const { id } = await Promise.resolve(context.params);
+  try {
+    // ✅ Use await directly on context.params
+    const { id } = await context.params;
 
-  await prisma.conversationMessage.deleteMany({
-    where: { conversationId: id },
-  });
+    await prisma.conversationMessage.deleteMany({
+      where: { conversationId: id },
+    });
 
-  await prisma.conversation.delete({
-    where: { id },
-  });
+    await prisma.conversation.delete({
+      where: { id },
+    });
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Delete error:", error);
+    return NextResponse.json({ error: "Delete failed" }, { status: 500 });
+  }
 }

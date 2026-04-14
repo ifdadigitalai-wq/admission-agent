@@ -19,10 +19,10 @@ async function verifyAdmin(req: NextRequest) {
   }
 }
 
-// 1. Change the context type to be SYNCHRONOUS
+// ✅ Explicitly type the context as a Promise for Next.js 15/16
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } } 
+  { params }: { params: Promise<{ id: string }> } 
 ) {
   const admin = await verifyAdmin(req);
   if (!admin) {
@@ -30,8 +30,8 @@ export async function GET(
   }
 
   try {
-    // 2. Remove the 'await' from params
-    const { id } = params; 
+    // ✅ You MUST await the params here
+    const { id } = await params; 
 
     const conversation = await prisma.conversation.findUnique({
       where: { id },
@@ -59,18 +59,19 @@ export async function GET(
   }
 }
 
-// 3. Apply the same change to the DELETE handler
+// ✅ Apply the same fix to DELETE
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const admin = await verifyAdmin(req);
   if (!admin)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = params; // No await here
-
   try {
+    // ✅ Await the params
+    const { id } = await params;
+
     await prisma.conversationMessage.deleteMany({
       where: { conversationId: id },
     });

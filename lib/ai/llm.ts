@@ -2,13 +2,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { searchSimilarFaqs } from "@/lib/ai/embeddings";
 import { prisma } from "@/lib/db/prisma";
-// import openai from "openai";
 
-// const openaiClient = new openai.OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY!,
-// });
-// you can use openaiclient to call it in place of genAI if you want to switch to openai's models instead of google's gemini
-// simply comment out genAI related code and uncomment the openaiClient code in getAIResponse function
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function getAIResponse(message: string, leadInfo?: any) {

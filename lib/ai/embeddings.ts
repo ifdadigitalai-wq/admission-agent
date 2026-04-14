@@ -1,12 +1,8 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-// import openai from "openai";
 import { prisma } from "@/lib/db/prisma";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-// const openaiClient = new openai.OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY!,
-// });
 
 // Generate embedding for any text using Gemini
 export async function generateEmbedding(text: string): Promise<number[]> {

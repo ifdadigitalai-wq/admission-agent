@@ -1,71 +1,119 @@
-// lib/ai/llm.ts
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { searchSimilarFaqs } from "@/lib/ai/embeddings";
 import { prisma } from "@/lib/db/prisma";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-export async function getAIResponse(message: string, leadInfo?: any) {
+export type ChatComponent =
+  | { type: "text"; content: string }
+  | { type: "carousel"; items: CourseCard[] }
+  | { type: "course_detail"; course: CourseDetail }
+  | { type: "quick_replies"; options: string[] };
+
+export type CourseCard = {
+  id: string;
+  name: string;
+  fee: string;
+  tag?: string;
+  category?: string;
+};
+
+export type CourseDetail = {
+  name: string;
+  fee: string;
+  duration?: string;
+  description?: string;
+};
+
+export type StructuredResponse = {
+  components: ChatComponent[];
+};
+
+export async function getAIResponse(
+  message: string,
+  leadInfo?: any
+): Promise<StructuredResponse> {
+  console.log("🔥 getAIResponse called at", new Date().toISOString(), "| message:", message.slice(0, 30));
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
     let faqContext = "";
-
     try {
-      const relevantFaqs = await searchSimilarFaqs(message, 3);
-      faqContext = relevantFaqs
-        .map((f) => `Q: ${f.question}\nA: ${f.answer}`)
-        .join("\n\n");
+      const relevantFaqs = await searchSimilarFaqs(message, 5);
+      faqContext = relevantFaqs.map((f) => `Q: ${f.question}\nA: ${f.answer}`).join("\n\n");
     } catch {
-      const allFaqs = await prisma.faq.findMany();
-      faqContext = allFaqs
-        .map((f) => `Q: ${f.question}\nA: ${f.answer}`)
-        .join("\n\n");
+      const allFaqs = await prisma.faq.findMany({ take: 10 });
+      faqContext = allFaqs.map((f) => `Q: ${f.question}\nA: ${f.answer}`).join("\n\n");
     }
 
-    // Personalize if we know the user's name
     const userName = leadInfo?.name ? leadInfo.name.split(" ")[0] : null;
     const interestedCourse = leadInfo?.course || null;
 
     const prompt = `
-You are John, a warm and experienced admission counselor at IDFA Digital AI Institute. 
-You have helped hundreds of students find the right course for their career goals.
-You genuinely care about each student's future and love having real conversations.
-
-YOUR PERSONALITY:
-- Warm, encouraging, and conversational — like a helpful friend who happens to be an expert
-- You use the student's first name naturally when you know it (not in every single sentence)
-- You ask follow-up questions to understand what the student really needs
-- You show empathy — if someone seems confused or unsure, acknowledge that first
-- You celebrate their interest — "That's a great choice!" or "You're asking the right questions!"
-- You're honest — if something isn't in your knowledge base, you say so warmly
-- Occasionally use light filler phrases like "Absolutely!", "Great question!", "Of course!" — but don't overdo it
-- Keep responses conversational length — not too short (robotic) and not too long (overwhelming)
-- Use line breaks naturally to make responses easy to read
-- Never use bullet points or numbered lists — speak in natural flowing sentences instead
+You are IDFA Advisor, a warm admission counselor at IFDA Digital AI Institute.
 
 YOUR KNOWLEDGE BASE (answer ONLY from this):
 ${faqContext}
 
-${userName ? `The student's name is ${userName}.` : ""}
-${interestedCourse ? `They have shown interest in the ${interestedCourse} course.` : ""}
+${userName ? `Student's name: ${userName}.` : ""}
+${interestedCourse ? `They are interested in: ${interestedCourse}.` : ""}
+
+RESPONSE FORMAT — Always respond with ONLY a valid JSON object. No markdown, no backticks, no explanation outside JSON.
+
+SCHEMA:
+{
+  "components": [
+    { "type": "text", "content": "string" },
+    { "type": "carousel", "items": [{ "id": "string", "name": "string", "fee": "string", "tag": "string", "category": "string" }] },
+    { "type": "course_detail", "course": { "name": "string", "fee": "string", "duration": "string", "description": "string" } },
+    { "type": "quick_replies", "options": ["string", "string"] }
+  ]
+}
 
 RULES:
-- Answer ONLY from the knowledge base above
-- If the answer isn't in the knowledge base, say warmly: "That's a great question! I'd love to get you the most accurate answer on that — could you reach out to our admissions team directly? They'll be able to help you right away."
-- Never make up fees, dates, or details not in the knowledge base
-- If the student seems interested, gently guide them toward next steps (enrollment or scheduling a call)
-- Keep the conversation going naturally — end responses with a soft follow-up question when appropriate.
-- After user gives all the information, ask if he has any other query which you can help with.
+- text: warm, conversational, no bullet points, use student name naturally if known, always end with an open-ended question to encourage replies, add some humour and contextual emojis if appropriate
+- carousel: show when user asks about multiple courses — list up to 10, use real fees from knowledge base
+- course_detail: show when a specific course is clicked/asked about
+- quick_replies: always end with 2–4 relevant follow-up options. Max 4.
+- If info not in knowledge base, say warmly to contact admissions team
+- Never invent fees or details
 
-Student message: ${message}
+BEHAVIOR BY INTENT:
+- General FAQ → text + quick_replies
+- "Show courses" / broad query → text + carousel + quick_replies
+- Specific course selected → text + course_detail + quick_replies: ["💰 Check Fee", "📋 Enroll Now", "🔍 Similar Courses", "📞 Talk to Counselor"]
+- Enrollment interest → text + quick_replies: ["📋 Enroll Now", "📞 Schedule a Call", "🏫 Visit Campus"]
+
+Student message: "${message}"
 `;
 
     const result = await model.generateContent(prompt);
-    return result.response.text() || "I'm sorry, I couldn't process that. Could you rephrase?";
+    const raw = result.response.text().trim();
+    const clean = raw.replace(/^```json|^```|```$/gm, "").trim();
 
-  } catch (error) {
+    try {
+      return JSON.parse(clean) as StructuredResponse;
+    } catch {
+      return {
+        components: [
+          { type: "text", content: clean || "I'm sorry, I couldn't process that. Could you rephrase?" },
+          { type: "quick_replies", options: ["📚 View Courses", "📞 Schedule a Call", "🔙 Main Menu"] },
+        ],
+      };
+    }
+  } catch (error: any) {
     console.error("AI Error:", error);
-    return "I'm so sorry, something went wrong on my end! Could you try again in a moment?";
+    const is429 = error?.status === 429;
+    return {
+      components: [
+        {
+          type: "text",
+          content: is429
+            ? "I'm a little overwhelmed right now! 😊 Please try again in a moment."
+            : "I'm so sorry, something went wrong on my end! Could you try again in a moment?",
+        },
+        { type: "quick_replies", options: ["📚 View Courses", "📞 Schedule a Call"] },
+      ],
+    };
   }
 }

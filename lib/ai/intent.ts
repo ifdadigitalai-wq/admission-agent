@@ -6,9 +6,8 @@ export type LeadInfo = {
   email?: string;
   phone?: string;
   course?: string;
-  collected: boolean; // true when all required fields are gathered
+  collected: boolean;
 };
-
 export type IntentResult = {
   intent:
     | "faq"
@@ -35,12 +34,12 @@ Existing info already collected: ${JSON.stringify(existingInfo)}
 
 User message: "${message}"
 
-Extract and return ONLY a JSON object with these fields (keep existing values if not mentioned in message):
+Extract and return ONLY a JSON object with these fields (keep existing values if not mentioned):
 {
   "name": "full name or null",
   "email": "email address or null",
   "phone": "phone number or null",
-  "course": "course they are interested in (Data Science, Finance, Programming) or null"
+  "course": "match to one of these exact names if mentioned: Basic Computer, Advance Excel, Spoken English, DCA, MDCA, Python Core, Python Advance, Python with Machine Learning, Python with Data Science, Website Designing, Website Development, Full Stack Development, MERN Stack, UI UX, Graphic Designing, Video Editing, Digital Marketing, Master Digital Marketing, Tally, Corporate E-Accounting, Data Analytics, Master Data Analytics, Stock Market, Diploma in Financial Market, or null if not mentioned"
 }
 
 Return ONLY raw JSON. No explanation. No markdown.
@@ -68,23 +67,46 @@ export async function detectIntent(message: string): Promise<string> {
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const prompt = `
-Classify the following user message into one of these intents:
-- "greeting" → user is saying hi, hello, hey etc.
-- "faq" → user is asking about courses, fees, eligibility, duration, admission, documents
-- "schedule" → user wants to book a call, schedule a meeting, visit campus, talk to someone, book appointment
-- "interest" → user wants to enroll, apply, register, or know how to join
-- "out_of_scope" → message is unrelated to education/admission
-- "view courses" → user is asking to see course offerings
+Classify this user message into exactly ONE intent.
 
-User message may contain multiple sentences. Classify based on the overall intent. If multiple intents are present, choose the one that seems most important.
-User message: "${message}"
+INTENT DEFINITIONS:
+- "courses" → wants to see/know about courses, programs, what's offered, course list, view courses, show courses, available programs
+- "greeting" → hi, hello, hey, good morning, namaste, how are you
+- "faq" → fees, cost, price, how much, eligibility, duration, documents, certificates, EMI, batch, timing, schedule of classes
+- "interest" → wants to enroll, join, register, apply, take admission, I want to do a course
+- "schedule" → book a call, schedule meeting, visit campus, talk to counselor, appointment, call me
+- "out_of_scope" → completely unrelated to education, institute, or learning
 
-Reply with ONLY one word: greeting,schedule, faq, interest, view courses, or out_of_scope
+STRICT RULES:
+- "courses" ALWAYS wins if message has: course, program, offer, available, show, list, what do you teach, subjects
+- NEVER return "out_of_scope" for anything education-related
+- Return ONLY the single word, nothing else
+
+Message: "${message}"
+
+Reply with ONE word only: courses, greeting, faq, interest, schedule, out_of_scope
 `;
 
   try {
     const result = await model.generateContent(prompt);
-    return result.response.text().trim().toLowerCase();
+    const raw = result.response.text().trim().toLowerCase().replace(/[^a-z_]/g, "");
+
+    // ✅ Keyword safety net — never let course queries fall through
+    const msgLower = message.toLowerCase();
+    if (["course", "program", "offer", "what do you", "show me", "available", "list"].some(k => msgLower.includes(k))) {
+      return "courses";
+    }
+    if (["fee", "cost", "price", "how much", "emi", "eligib", "duration", "timing"].some(k => msgLower.includes(k))) {
+      return "faq";
+    }
+    if (["enroll", "join", "register", "apply", "admission"].some(k => msgLower.includes(k))) {
+      return "interest";
+    }
+    if (["call", "visit", "schedule", "appointment", "meet"].some(k => msgLower.includes(k))) {
+      return "schedule";
+    }
+
+    return raw || "faq";
   } catch {
     return "faq";
   }
@@ -92,23 +114,12 @@ Reply with ONLY one word: greeting,schedule, faq, interest, view courses, or out
 
 // Get the next question to ask based on missing fields
 export function getNextQuestion(leadInfo: LeadInfo): string | null {
-  if (!leadInfo.name) {
-    return "May I know your full name?";
-  }
-  if (!leadInfo.phone) {
-    return "Could you please share your phone number?";
-  }
-  if (!leadInfo.email) {
-    return "What's your email address?";
-  }
-  if (!leadInfo.course) {
-    return "Which course are you interested in? We offer Data Science, Finance, and Programming.";
-  }
-
-  return null; // all info collected
+  if (!leadInfo.name) return "How about knowing your name first? It helps me to reach you better when you join us!😃";
+  if (!leadInfo.phone) return "Could you please share your phone number?";
+  if (!leadInfo.email) return "What's your email address?";
+  if (!leadInfo.course) return "Which course are you interested in? We offer programs in IT, Accounts, Data Science, Digital Marketing, Stock Market, and more — just tell me your interest area!";
+  return null;
 }
-
-// Check if all required lead info is collected
 export function isLeadComplete(leadInfo: LeadInfo): boolean {
   return !!(
     leadInfo.name &&

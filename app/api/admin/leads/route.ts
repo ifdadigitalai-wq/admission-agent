@@ -1,29 +1,19 @@
 // app/api/admin/leads/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
+import { requireRole } from "@/lib/auth/middleware";
 
-import { jwtVerify } from "jose";
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "your-super-secret-jwt-key-change-this");
-async function verifyAdmin(req: NextRequest) {
-  try {
-    const token = req.cookies.get("admin_token")?.value || req.headers.get("authorization")?.replace("Bearer ", "");
-    if (!token) return null;
-    const { payload } = await jwtVerify(token, SECRET);
-    return payload;
-  } catch { return null; }
-}
 export async function GET(req: NextRequest) {
   try {
-    const admin = await verifyAdmin(req);
-    if (!admin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const admin = requireRole(req, "leads");
     const leads = await prisma.lead.findMany({
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(leads);
-  } catch (error) {
-    console.error("Lead fetch error:", JSON.stringify(error, null, 2)); //  detailed log
-    return NextResponse.json({ error: String(error) }, { status: 500 }); //  return real error
+  } catch (error: any) {
+    if (error.message === "Unauthorized") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (error.message === "Forbidden") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    console.error("Lead fetch error:", JSON.stringify(error, null, 2));
+    return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }

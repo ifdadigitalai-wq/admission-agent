@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { hasPermission, getDefaultPage } from "@/lib/auth/permissions";
 
 type Message = { id: string; role: string; content: string; createdAt: string };
 type Conversation = {
@@ -65,6 +67,7 @@ function getAvatarColor(name: string): [string, string] {
   for (let i = 0; i < name.length; i++) hash += name.charCodeAt(i);
   return AVATAR_COLORS[hash % AVATAR_COLORS.length] as [string, string];
 }
+
 
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -407,6 +410,7 @@ export default function ConversationsPage() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [active, setActive] = useState<Conversation | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
   const [chatLoading, setChatLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "website" | "whatsapp">("all");
@@ -415,6 +419,7 @@ export default function ConversationsPage() {
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const getHeaders = (): HeadersInit => {
     const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
@@ -426,11 +431,27 @@ export default function ConversationsPage() {
     if (Array.isArray(data)) setConversations(data);
   };
 
+  // Auth + permission check
   useEffect(() => {
+    fetch("/api/admin/auth/me", { headers: getHeaders() })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.error) { router.push("/admin/login"); return; }
+        if (!hasPermission(data.admin.role, "conversations")) {
+          router.push(getDefaultPage(data.admin.role));
+          return;
+        }
+        setAuthorized(true);
+      })
+      .catch(() => router.push("/admin/login"));
+  }, []);
+
+  useEffect(() => {
+    if (!authorized) return;
     fetchConversations().finally(() => setLoading(false));
     const interval = setInterval(fetchConversations, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [authorized]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

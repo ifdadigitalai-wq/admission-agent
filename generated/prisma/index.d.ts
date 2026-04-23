@@ -29,6 +29,11 @@ export type Post = $Result.DefaultSelection<Prisma.$PostPayload>
  */
 export type Faq = $Result.DefaultSelection<Prisma.$FaqPayload>
 /**
+ * Model KnowledgeFile
+ * 
+ */
+export type KnowledgeFile = $Result.DefaultSelection<Prisma.$KnowledgeFilePayload>
+/**
  * Model Lead
  * 
  */
@@ -53,6 +58,11 @@ export type Conversation = $Result.DefaultSelection<Prisma.$ConversationPayload>
  * 
  */
 export type ConversationMessage = $Result.DefaultSelection<Prisma.$ConversationMessagePayload>
+/**
+ * Model Course
+ * 
+ */
+export type Course = $Result.DefaultSelection<Prisma.$CoursePayload>
 
 /**
  * Enums
@@ -84,6 +94,22 @@ export const AppointmentStatus: {
 
 export type AppointmentStatus = (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
 
+
+export const AdminRole: {
+  ADMIN: 'ADMIN',
+  COUNSELOR: 'COUNSELOR',
+  TELECALLER: 'TELECALLER',
+  MANAGER: 'MANAGER',
+  SUPPORT: 'SUPPORT',
+  MANAGEMENT: 'MANAGEMENT',
+  SALES: 'SALES',
+  TELE_CALLER: 'TELE_CALLER',
+  DEVELOPER: 'DEVELOPER',
+  MARKETING: 'MARKETING'
+};
+
+export type AdminRole = (typeof AdminRole)[keyof typeof AdminRole]
+
 }
 
 export type LeadStatus = $Enums.LeadStatus
@@ -97,6 +123,10 @@ export const AppointmentType: typeof $Enums.AppointmentType
 export type AppointmentStatus = $Enums.AppointmentStatus
 
 export const AppointmentStatus: typeof $Enums.AppointmentStatus
+
+export type AdminRole = $Enums.AdminRole
+
+export const AdminRole: typeof $Enums.AdminRole
 
 /**
  * ##  Prisma Client ʲˢ
@@ -250,6 +280,16 @@ export class PrismaClient<
   get faq(): Prisma.FaqDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.knowledgeFile`: Exposes CRUD operations for the **KnowledgeFile** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more KnowledgeFiles
+    * const knowledgeFiles = await prisma.knowledgeFile.findMany()
+    * ```
+    */
+  get knowledgeFile(): Prisma.KnowledgeFileDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.lead`: Exposes CRUD operations for the **Lead** model.
     * Example usage:
     * ```ts
@@ -298,6 +338,16 @@ export class PrismaClient<
     * ```
     */
   get conversationMessage(): Prisma.ConversationMessageDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.course`: Exposes CRUD operations for the **Course** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Courses
+    * const courses = await prisma.course.findMany()
+    * ```
+    */
+  get course(): Prisma.CourseDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -735,11 +785,13 @@ export namespace Prisma {
     User: 'User',
     Post: 'Post',
     Faq: 'Faq',
+    KnowledgeFile: 'KnowledgeFile',
     Lead: 'Lead',
     Appointment: 'Appointment',
     Admin: 'Admin',
     Conversation: 'Conversation',
-    ConversationMessage: 'ConversationMessage'
+    ConversationMessage: 'ConversationMessage',
+    Course: 'Course'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -755,7 +807,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "post" | "faq" | "lead" | "appointment" | "admin" | "conversation" | "conversationMessage"
+      modelProps: "user" | "post" | "faq" | "knowledgeFile" | "lead" | "appointment" | "admin" | "conversation" | "conversationMessage" | "course"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -978,6 +1030,80 @@ export namespace Prisma {
           count: {
             args: Prisma.FaqCountArgs<ExtArgs>
             result: $Utils.Optional<FaqCountAggregateOutputType> | number
+          }
+        }
+      }
+      KnowledgeFile: {
+        payload: Prisma.$KnowledgeFilePayload<ExtArgs>
+        fields: Prisma.KnowledgeFileFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.KnowledgeFileFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.KnowledgeFileFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload>
+          }
+          findFirst: {
+            args: Prisma.KnowledgeFileFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.KnowledgeFileFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload>
+          }
+          findMany: {
+            args: Prisma.KnowledgeFileFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload>[]
+          }
+          create: {
+            args: Prisma.KnowledgeFileCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload>
+          }
+          createMany: {
+            args: Prisma.KnowledgeFileCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.KnowledgeFileCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload>[]
+          }
+          delete: {
+            args: Prisma.KnowledgeFileDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload>
+          }
+          update: {
+            args: Prisma.KnowledgeFileUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload>
+          }
+          deleteMany: {
+            args: Prisma.KnowledgeFileDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.KnowledgeFileUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.KnowledgeFileUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload>[]
+          }
+          upsert: {
+            args: Prisma.KnowledgeFileUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeFilePayload>
+          }
+          aggregate: {
+            args: Prisma.KnowledgeFileAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateKnowledgeFile>
+          }
+          groupBy: {
+            args: Prisma.KnowledgeFileGroupByArgs<ExtArgs>
+            result: $Utils.Optional<KnowledgeFileGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.KnowledgeFileCountArgs<ExtArgs>
+            result: $Utils.Optional<KnowledgeFileCountAggregateOutputType> | number
           }
         }
       }
@@ -1351,6 +1477,80 @@ export namespace Prisma {
           }
         }
       }
+      Course: {
+        payload: Prisma.$CoursePayload<ExtArgs>
+        fields: Prisma.CourseFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CourseFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CourseFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
+          }
+          findFirst: {
+            args: Prisma.CourseFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CourseFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
+          }
+          findMany: {
+            args: Prisma.CourseFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload>[]
+          }
+          create: {
+            args: Prisma.CourseCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
+          }
+          createMany: {
+            args: Prisma.CourseCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CourseCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload>[]
+          }
+          delete: {
+            args: Prisma.CourseDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
+          }
+          update: {
+            args: Prisma.CourseUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
+          }
+          deleteMany: {
+            args: Prisma.CourseDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CourseUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CourseUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload>[]
+          }
+          upsert: {
+            args: Prisma.CourseUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
+          }
+          aggregate: {
+            args: Prisma.CourseAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCourse>
+          }
+          groupBy: {
+            args: Prisma.CourseGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CourseGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CourseCountArgs<ExtArgs>
+            result: $Utils.Optional<CourseCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1462,11 +1662,13 @@ export namespace Prisma {
     user?: UserOmit
     post?: PostOmit
     faq?: FaqOmit
+    knowledgeFile?: KnowledgeFileOmit
     lead?: LeadOmit
     appointment?: AppointmentOmit
     admin?: AdminOmit
     conversation?: ConversationOmit
     conversationMessage?: ConversationMessageOmit
+    course?: CourseOmit
   }
 
   /* Types for Logging */
@@ -3806,18 +4008,21 @@ export namespace Prisma {
     id: string | null
     question: string | null
     answer: string | null
+    source: string | null
   }
 
   export type FaqMaxAggregateOutputType = {
     id: string | null
     question: string | null
     answer: string | null
+    source: string | null
   }
 
   export type FaqCountAggregateOutputType = {
     id: number
     question: number
     answer: number
+    source: number
     _all: number
   }
 
@@ -3826,18 +4031,21 @@ export namespace Prisma {
     id?: true
     question?: true
     answer?: true
+    source?: true
   }
 
   export type FaqMaxAggregateInputType = {
     id?: true
     question?: true
     answer?: true
+    source?: true
   }
 
   export type FaqCountAggregateInputType = {
     id?: true
     question?: true
     answer?: true
+    source?: true
     _all?: true
   }
 
@@ -3917,6 +4125,7 @@ export namespace Prisma {
     id: string
     question: string
     answer: string
+    source: string | null
     _count: FaqCountAggregateOutputType | null
     _min: FaqMinAggregateOutputType | null
     _max: FaqMaxAggregateOutputType | null
@@ -3940,27 +4149,31 @@ export namespace Prisma {
     id?: boolean
     question?: boolean
     answer?: boolean
+    source?: boolean
   }, ExtArgs["result"]["faq"]>
 
   export type FaqSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     question?: boolean
     answer?: boolean
+    source?: boolean
   }, ExtArgs["result"]["faq"]>
 
   export type FaqSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     question?: boolean
     answer?: boolean
+    source?: boolean
   }, ExtArgs["result"]["faq"]>
 
   export type FaqSelectScalar = {
     id?: boolean
     question?: boolean
     answer?: boolean
+    source?: boolean
   }
 
-  export type FaqOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "answer", ExtArgs["result"]["faq"]>
+  export type FaqOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "answer" | "source", ExtArgs["result"]["faq"]>
 
   export type $FaqPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Faq"
@@ -3969,6 +4182,7 @@ export namespace Prisma {
       id: string
       question: string
       answer: string
+      source: string | null
     }, ExtArgs["result"]["faq"]>
     composites: {}
   }
@@ -4395,6 +4609,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Faq", 'String'>
     readonly question: FieldRef<"Faq", 'String'>
     readonly answer: FieldRef<"Faq", 'String'>
+    readonly source: FieldRef<"Faq", 'String'>
   }
     
 
@@ -4763,6 +4978,1096 @@ export namespace Prisma {
      * Omit specific fields from the Faq
      */
     omit?: FaqOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model KnowledgeFile
+   */
+
+  export type AggregateKnowledgeFile = {
+    _count: KnowledgeFileCountAggregateOutputType | null
+    _avg: KnowledgeFileAvgAggregateOutputType | null
+    _sum: KnowledgeFileSumAggregateOutputType | null
+    _min: KnowledgeFileMinAggregateOutputType | null
+    _max: KnowledgeFileMaxAggregateOutputType | null
+  }
+
+  export type KnowledgeFileAvgAggregateOutputType = {
+    fileSize: number | null
+    entries: number | null
+  }
+
+  export type KnowledgeFileSumAggregateOutputType = {
+    fileSize: number | null
+    entries: number | null
+  }
+
+  export type KnowledgeFileMinAggregateOutputType = {
+    id: string | null
+    filename: string | null
+    fileType: string | null
+    fileSize: number | null
+    entries: number | null
+    status: string | null
+    error: string | null
+    uploadedBy: string | null
+    createdAt: Date | null
+  }
+
+  export type KnowledgeFileMaxAggregateOutputType = {
+    id: string | null
+    filename: string | null
+    fileType: string | null
+    fileSize: number | null
+    entries: number | null
+    status: string | null
+    error: string | null
+    uploadedBy: string | null
+    createdAt: Date | null
+  }
+
+  export type KnowledgeFileCountAggregateOutputType = {
+    id: number
+    filename: number
+    fileType: number
+    fileSize: number
+    entries: number
+    status: number
+    error: number
+    uploadedBy: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type KnowledgeFileAvgAggregateInputType = {
+    fileSize?: true
+    entries?: true
+  }
+
+  export type KnowledgeFileSumAggregateInputType = {
+    fileSize?: true
+    entries?: true
+  }
+
+  export type KnowledgeFileMinAggregateInputType = {
+    id?: true
+    filename?: true
+    fileType?: true
+    fileSize?: true
+    entries?: true
+    status?: true
+    error?: true
+    uploadedBy?: true
+    createdAt?: true
+  }
+
+  export type KnowledgeFileMaxAggregateInputType = {
+    id?: true
+    filename?: true
+    fileType?: true
+    fileSize?: true
+    entries?: true
+    status?: true
+    error?: true
+    uploadedBy?: true
+    createdAt?: true
+  }
+
+  export type KnowledgeFileCountAggregateInputType = {
+    id?: true
+    filename?: true
+    fileType?: true
+    fileSize?: true
+    entries?: true
+    status?: true
+    error?: true
+    uploadedBy?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type KnowledgeFileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KnowledgeFile to aggregate.
+     */
+    where?: KnowledgeFileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeFiles to fetch.
+     */
+    orderBy?: KnowledgeFileOrderByWithRelationInput | KnowledgeFileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: KnowledgeFileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeFiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeFiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned KnowledgeFiles
+    **/
+    _count?: true | KnowledgeFileCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: KnowledgeFileAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: KnowledgeFileSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: KnowledgeFileMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: KnowledgeFileMaxAggregateInputType
+  }
+
+  export type GetKnowledgeFileAggregateType<T extends KnowledgeFileAggregateArgs> = {
+        [P in keyof T & keyof AggregateKnowledgeFile]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateKnowledgeFile[P]>
+      : GetScalarType<T[P], AggregateKnowledgeFile[P]>
+  }
+
+
+
+
+  export type KnowledgeFileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KnowledgeFileWhereInput
+    orderBy?: KnowledgeFileOrderByWithAggregationInput | KnowledgeFileOrderByWithAggregationInput[]
+    by: KnowledgeFileScalarFieldEnum[] | KnowledgeFileScalarFieldEnum
+    having?: KnowledgeFileScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: KnowledgeFileCountAggregateInputType | true
+    _avg?: KnowledgeFileAvgAggregateInputType
+    _sum?: KnowledgeFileSumAggregateInputType
+    _min?: KnowledgeFileMinAggregateInputType
+    _max?: KnowledgeFileMaxAggregateInputType
+  }
+
+  export type KnowledgeFileGroupByOutputType = {
+    id: string
+    filename: string
+    fileType: string
+    fileSize: number
+    entries: number
+    status: string
+    error: string | null
+    uploadedBy: string
+    createdAt: Date
+    _count: KnowledgeFileCountAggregateOutputType | null
+    _avg: KnowledgeFileAvgAggregateOutputType | null
+    _sum: KnowledgeFileSumAggregateOutputType | null
+    _min: KnowledgeFileMinAggregateOutputType | null
+    _max: KnowledgeFileMaxAggregateOutputType | null
+  }
+
+  type GetKnowledgeFileGroupByPayload<T extends KnowledgeFileGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<KnowledgeFileGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof KnowledgeFileGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], KnowledgeFileGroupByOutputType[P]>
+            : GetScalarType<T[P], KnowledgeFileGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type KnowledgeFileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    filename?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    entries?: boolean
+    status?: boolean
+    error?: boolean
+    uploadedBy?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["knowledgeFile"]>
+
+  export type KnowledgeFileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    filename?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    entries?: boolean
+    status?: boolean
+    error?: boolean
+    uploadedBy?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["knowledgeFile"]>
+
+  export type KnowledgeFileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    filename?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    entries?: boolean
+    status?: boolean
+    error?: boolean
+    uploadedBy?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["knowledgeFile"]>
+
+  export type KnowledgeFileSelectScalar = {
+    id?: boolean
+    filename?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    entries?: boolean
+    status?: boolean
+    error?: boolean
+    uploadedBy?: boolean
+    createdAt?: boolean
+  }
+
+  export type KnowledgeFileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filename" | "fileType" | "fileSize" | "entries" | "status" | "error" | "uploadedBy" | "createdAt", ExtArgs["result"]["knowledgeFile"]>
+
+  export type $KnowledgeFilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "KnowledgeFile"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      filename: string
+      fileType: string
+      fileSize: number
+      entries: number
+      status: string
+      error: string | null
+      uploadedBy: string
+      createdAt: Date
+    }, ExtArgs["result"]["knowledgeFile"]>
+    composites: {}
+  }
+
+  type KnowledgeFileGetPayload<S extends boolean | null | undefined | KnowledgeFileDefaultArgs> = $Result.GetResult<Prisma.$KnowledgeFilePayload, S>
+
+  type KnowledgeFileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<KnowledgeFileFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: KnowledgeFileCountAggregateInputType | true
+    }
+
+  export interface KnowledgeFileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['KnowledgeFile'], meta: { name: 'KnowledgeFile' } }
+    /**
+     * Find zero or one KnowledgeFile that matches the filter.
+     * @param {KnowledgeFileFindUniqueArgs} args - Arguments to find a KnowledgeFile
+     * @example
+     * // Get one KnowledgeFile
+     * const knowledgeFile = await prisma.knowledgeFile.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends KnowledgeFileFindUniqueArgs>(args: SelectSubset<T, KnowledgeFileFindUniqueArgs<ExtArgs>>): Prisma__KnowledgeFileClient<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one KnowledgeFile that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {KnowledgeFileFindUniqueOrThrowArgs} args - Arguments to find a KnowledgeFile
+     * @example
+     * // Get one KnowledgeFile
+     * const knowledgeFile = await prisma.knowledgeFile.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends KnowledgeFileFindUniqueOrThrowArgs>(args: SelectSubset<T, KnowledgeFileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__KnowledgeFileClient<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KnowledgeFile that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeFileFindFirstArgs} args - Arguments to find a KnowledgeFile
+     * @example
+     * // Get one KnowledgeFile
+     * const knowledgeFile = await prisma.knowledgeFile.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends KnowledgeFileFindFirstArgs>(args?: SelectSubset<T, KnowledgeFileFindFirstArgs<ExtArgs>>): Prisma__KnowledgeFileClient<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KnowledgeFile that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeFileFindFirstOrThrowArgs} args - Arguments to find a KnowledgeFile
+     * @example
+     * // Get one KnowledgeFile
+     * const knowledgeFile = await prisma.knowledgeFile.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends KnowledgeFileFindFirstOrThrowArgs>(args?: SelectSubset<T, KnowledgeFileFindFirstOrThrowArgs<ExtArgs>>): Prisma__KnowledgeFileClient<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more KnowledgeFiles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeFileFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all KnowledgeFiles
+     * const knowledgeFiles = await prisma.knowledgeFile.findMany()
+     * 
+     * // Get first 10 KnowledgeFiles
+     * const knowledgeFiles = await prisma.knowledgeFile.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const knowledgeFileWithIdOnly = await prisma.knowledgeFile.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends KnowledgeFileFindManyArgs>(args?: SelectSubset<T, KnowledgeFileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a KnowledgeFile.
+     * @param {KnowledgeFileCreateArgs} args - Arguments to create a KnowledgeFile.
+     * @example
+     * // Create one KnowledgeFile
+     * const KnowledgeFile = await prisma.knowledgeFile.create({
+     *   data: {
+     *     // ... data to create a KnowledgeFile
+     *   }
+     * })
+     * 
+     */
+    create<T extends KnowledgeFileCreateArgs>(args: SelectSubset<T, KnowledgeFileCreateArgs<ExtArgs>>): Prisma__KnowledgeFileClient<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many KnowledgeFiles.
+     * @param {KnowledgeFileCreateManyArgs} args - Arguments to create many KnowledgeFiles.
+     * @example
+     * // Create many KnowledgeFiles
+     * const knowledgeFile = await prisma.knowledgeFile.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends KnowledgeFileCreateManyArgs>(args?: SelectSubset<T, KnowledgeFileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many KnowledgeFiles and returns the data saved in the database.
+     * @param {KnowledgeFileCreateManyAndReturnArgs} args - Arguments to create many KnowledgeFiles.
+     * @example
+     * // Create many KnowledgeFiles
+     * const knowledgeFile = await prisma.knowledgeFile.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many KnowledgeFiles and only return the `id`
+     * const knowledgeFileWithIdOnly = await prisma.knowledgeFile.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends KnowledgeFileCreateManyAndReturnArgs>(args?: SelectSubset<T, KnowledgeFileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a KnowledgeFile.
+     * @param {KnowledgeFileDeleteArgs} args - Arguments to delete one KnowledgeFile.
+     * @example
+     * // Delete one KnowledgeFile
+     * const KnowledgeFile = await prisma.knowledgeFile.delete({
+     *   where: {
+     *     // ... filter to delete one KnowledgeFile
+     *   }
+     * })
+     * 
+     */
+    delete<T extends KnowledgeFileDeleteArgs>(args: SelectSubset<T, KnowledgeFileDeleteArgs<ExtArgs>>): Prisma__KnowledgeFileClient<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one KnowledgeFile.
+     * @param {KnowledgeFileUpdateArgs} args - Arguments to update one KnowledgeFile.
+     * @example
+     * // Update one KnowledgeFile
+     * const knowledgeFile = await prisma.knowledgeFile.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends KnowledgeFileUpdateArgs>(args: SelectSubset<T, KnowledgeFileUpdateArgs<ExtArgs>>): Prisma__KnowledgeFileClient<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more KnowledgeFiles.
+     * @param {KnowledgeFileDeleteManyArgs} args - Arguments to filter KnowledgeFiles to delete.
+     * @example
+     * // Delete a few KnowledgeFiles
+     * const { count } = await prisma.knowledgeFile.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends KnowledgeFileDeleteManyArgs>(args?: SelectSubset<T, KnowledgeFileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KnowledgeFiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeFileUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many KnowledgeFiles
+     * const knowledgeFile = await prisma.knowledgeFile.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends KnowledgeFileUpdateManyArgs>(args: SelectSubset<T, KnowledgeFileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KnowledgeFiles and returns the data updated in the database.
+     * @param {KnowledgeFileUpdateManyAndReturnArgs} args - Arguments to update many KnowledgeFiles.
+     * @example
+     * // Update many KnowledgeFiles
+     * const knowledgeFile = await prisma.knowledgeFile.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more KnowledgeFiles and only return the `id`
+     * const knowledgeFileWithIdOnly = await prisma.knowledgeFile.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends KnowledgeFileUpdateManyAndReturnArgs>(args: SelectSubset<T, KnowledgeFileUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one KnowledgeFile.
+     * @param {KnowledgeFileUpsertArgs} args - Arguments to update or create a KnowledgeFile.
+     * @example
+     * // Update or create a KnowledgeFile
+     * const knowledgeFile = await prisma.knowledgeFile.upsert({
+     *   create: {
+     *     // ... data to create a KnowledgeFile
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the KnowledgeFile we want to update
+     *   }
+     * })
+     */
+    upsert<T extends KnowledgeFileUpsertArgs>(args: SelectSubset<T, KnowledgeFileUpsertArgs<ExtArgs>>): Prisma__KnowledgeFileClient<$Result.GetResult<Prisma.$KnowledgeFilePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of KnowledgeFiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeFileCountArgs} args - Arguments to filter KnowledgeFiles to count.
+     * @example
+     * // Count the number of KnowledgeFiles
+     * const count = await prisma.knowledgeFile.count({
+     *   where: {
+     *     // ... the filter for the KnowledgeFiles we want to count
+     *   }
+     * })
+    **/
+    count<T extends KnowledgeFileCountArgs>(
+      args?: Subset<T, KnowledgeFileCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], KnowledgeFileCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a KnowledgeFile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeFileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends KnowledgeFileAggregateArgs>(args: Subset<T, KnowledgeFileAggregateArgs>): Prisma.PrismaPromise<GetKnowledgeFileAggregateType<T>>
+
+    /**
+     * Group by KnowledgeFile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeFileGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends KnowledgeFileGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: KnowledgeFileGroupByArgs['orderBy'] }
+        : { orderBy?: KnowledgeFileGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, KnowledgeFileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKnowledgeFileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the KnowledgeFile model
+   */
+  readonly fields: KnowledgeFileFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for KnowledgeFile.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__KnowledgeFileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the KnowledgeFile model
+   */
+  interface KnowledgeFileFieldRefs {
+    readonly id: FieldRef<"KnowledgeFile", 'String'>
+    readonly filename: FieldRef<"KnowledgeFile", 'String'>
+    readonly fileType: FieldRef<"KnowledgeFile", 'String'>
+    readonly fileSize: FieldRef<"KnowledgeFile", 'Int'>
+    readonly entries: FieldRef<"KnowledgeFile", 'Int'>
+    readonly status: FieldRef<"KnowledgeFile", 'String'>
+    readonly error: FieldRef<"KnowledgeFile", 'String'>
+    readonly uploadedBy: FieldRef<"KnowledgeFile", 'String'>
+    readonly createdAt: FieldRef<"KnowledgeFile", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * KnowledgeFile findUnique
+   */
+  export type KnowledgeFileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeFile to fetch.
+     */
+    where: KnowledgeFileWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeFile findUniqueOrThrow
+   */
+  export type KnowledgeFileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeFile to fetch.
+     */
+    where: KnowledgeFileWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeFile findFirst
+   */
+  export type KnowledgeFileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeFile to fetch.
+     */
+    where?: KnowledgeFileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeFiles to fetch.
+     */
+    orderBy?: KnowledgeFileOrderByWithRelationInput | KnowledgeFileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KnowledgeFiles.
+     */
+    cursor?: KnowledgeFileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeFiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeFiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KnowledgeFiles.
+     */
+    distinct?: KnowledgeFileScalarFieldEnum | KnowledgeFileScalarFieldEnum[]
+  }
+
+  /**
+   * KnowledgeFile findFirstOrThrow
+   */
+  export type KnowledgeFileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeFile to fetch.
+     */
+    where?: KnowledgeFileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeFiles to fetch.
+     */
+    orderBy?: KnowledgeFileOrderByWithRelationInput | KnowledgeFileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KnowledgeFiles.
+     */
+    cursor?: KnowledgeFileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeFiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeFiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KnowledgeFiles.
+     */
+    distinct?: KnowledgeFileScalarFieldEnum | KnowledgeFileScalarFieldEnum[]
+  }
+
+  /**
+   * KnowledgeFile findMany
+   */
+  export type KnowledgeFileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeFiles to fetch.
+     */
+    where?: KnowledgeFileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeFiles to fetch.
+     */
+    orderBy?: KnowledgeFileOrderByWithRelationInput | KnowledgeFileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing KnowledgeFiles.
+     */
+    cursor?: KnowledgeFileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeFiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeFiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KnowledgeFiles.
+     */
+    distinct?: KnowledgeFileScalarFieldEnum | KnowledgeFileScalarFieldEnum[]
+  }
+
+  /**
+   * KnowledgeFile create
+   */
+  export type KnowledgeFileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * The data needed to create a KnowledgeFile.
+     */
+    data: XOR<KnowledgeFileCreateInput, KnowledgeFileUncheckedCreateInput>
+  }
+
+  /**
+   * KnowledgeFile createMany
+   */
+  export type KnowledgeFileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many KnowledgeFiles.
+     */
+    data: KnowledgeFileCreateManyInput | KnowledgeFileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * KnowledgeFile createManyAndReturn
+   */
+  export type KnowledgeFileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * The data used to create many KnowledgeFiles.
+     */
+    data: KnowledgeFileCreateManyInput | KnowledgeFileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * KnowledgeFile update
+   */
+  export type KnowledgeFileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * The data needed to update a KnowledgeFile.
+     */
+    data: XOR<KnowledgeFileUpdateInput, KnowledgeFileUncheckedUpdateInput>
+    /**
+     * Choose, which KnowledgeFile to update.
+     */
+    where: KnowledgeFileWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeFile updateMany
+   */
+  export type KnowledgeFileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update KnowledgeFiles.
+     */
+    data: XOR<KnowledgeFileUpdateManyMutationInput, KnowledgeFileUncheckedUpdateManyInput>
+    /**
+     * Filter which KnowledgeFiles to update
+     */
+    where?: KnowledgeFileWhereInput
+    /**
+     * Limit how many KnowledgeFiles to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * KnowledgeFile updateManyAndReturn
+   */
+  export type KnowledgeFileUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * The data used to update KnowledgeFiles.
+     */
+    data: XOR<KnowledgeFileUpdateManyMutationInput, KnowledgeFileUncheckedUpdateManyInput>
+    /**
+     * Filter which KnowledgeFiles to update
+     */
+    where?: KnowledgeFileWhereInput
+    /**
+     * Limit how many KnowledgeFiles to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * KnowledgeFile upsert
+   */
+  export type KnowledgeFileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * The filter to search for the KnowledgeFile to update in case it exists.
+     */
+    where: KnowledgeFileWhereUniqueInput
+    /**
+     * In case the KnowledgeFile found by the `where` argument doesn't exist, create a new KnowledgeFile with this data.
+     */
+    create: XOR<KnowledgeFileCreateInput, KnowledgeFileUncheckedCreateInput>
+    /**
+     * In case the KnowledgeFile was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<KnowledgeFileUpdateInput, KnowledgeFileUncheckedUpdateInput>
+  }
+
+  /**
+   * KnowledgeFile delete
+   */
+  export type KnowledgeFileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
+    /**
+     * Filter which KnowledgeFile to delete.
+     */
+    where: KnowledgeFileWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeFile deleteMany
+   */
+  export type KnowledgeFileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KnowledgeFiles to delete
+     */
+    where?: KnowledgeFileWhereInput
+    /**
+     * Limit how many KnowledgeFiles to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * KnowledgeFile without action
+   */
+  export type KnowledgeFileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeFile
+     */
+    select?: KnowledgeFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeFile
+     */
+    omit?: KnowledgeFileOmit<ExtArgs> | null
   }
 
 
@@ -6898,7 +8203,9 @@ export namespace Prisma {
     name: string | null
     email: string | null
     password: string | null
-    role: string | null
+    role: $Enums.AdminRole | null
+    contactNumber: string | null
+    profilePicture: string | null
     createdAt: Date | null
   }
 
@@ -6907,7 +8214,9 @@ export namespace Prisma {
     name: string | null
     email: string | null
     password: string | null
-    role: string | null
+    role: $Enums.AdminRole | null
+    contactNumber: string | null
+    profilePicture: string | null
     createdAt: Date | null
   }
 
@@ -6917,6 +8226,8 @@ export namespace Prisma {
     email: number
     password: number
     role: number
+    contactNumber: number
+    profilePicture: number
     createdAt: number
     _all: number
   }
@@ -6928,6 +8239,8 @@ export namespace Prisma {
     email?: true
     password?: true
     role?: true
+    contactNumber?: true
+    profilePicture?: true
     createdAt?: true
   }
 
@@ -6937,6 +8250,8 @@ export namespace Prisma {
     email?: true
     password?: true
     role?: true
+    contactNumber?: true
+    profilePicture?: true
     createdAt?: true
   }
 
@@ -6946,6 +8261,8 @@ export namespace Prisma {
     email?: true
     password?: true
     role?: true
+    contactNumber?: true
+    profilePicture?: true
     createdAt?: true
     _all?: true
   }
@@ -7027,7 +8344,9 @@ export namespace Prisma {
     name: string
     email: string
     password: string
-    role: string
+    role: $Enums.AdminRole
+    contactNumber: string | null
+    profilePicture: string | null
     createdAt: Date
     _count: AdminCountAggregateOutputType | null
     _min: AdminMinAggregateOutputType | null
@@ -7054,6 +8373,8 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    contactNumber?: boolean
+    profilePicture?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["admin"]>
 
@@ -7063,6 +8384,8 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    contactNumber?: boolean
+    profilePicture?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["admin"]>
 
@@ -7072,6 +8395,8 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    contactNumber?: boolean
+    profilePicture?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["admin"]>
 
@@ -7081,10 +8406,12 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    contactNumber?: boolean
+    profilePicture?: boolean
     createdAt?: boolean
   }
 
-  export type AdminOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "createdAt", ExtArgs["result"]["admin"]>
+  export type AdminOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "contactNumber" | "profilePicture" | "createdAt", ExtArgs["result"]["admin"]>
 
   export type $AdminPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Admin"
@@ -7094,7 +8421,9 @@ export namespace Prisma {
       name: string
       email: string
       password: string
-      role: string
+      role: $Enums.AdminRole
+      contactNumber: string | null
+      profilePicture: string | null
       createdAt: Date
     }, ExtArgs["result"]["admin"]>
     composites: {}
@@ -7523,7 +8852,9 @@ export namespace Prisma {
     readonly name: FieldRef<"Admin", 'String'>
     readonly email: FieldRef<"Admin", 'String'>
     readonly password: FieldRef<"Admin", 'String'>
-    readonly role: FieldRef<"Admin", 'String'>
+    readonly role: FieldRef<"Admin", 'AdminRole'>
+    readonly contactNumber: FieldRef<"Admin", 'String'>
+    readonly profilePicture: FieldRef<"Admin", 'String'>
     readonly createdAt: FieldRef<"Admin", 'DateTime'>
   }
     
@@ -10108,6 +11439,1079 @@ export namespace Prisma {
 
 
   /**
+   * Model Course
+   */
+
+  export type AggregateCourse = {
+    _count: CourseCountAggregateOutputType | null
+    _avg: CourseAvgAggregateOutputType | null
+    _sum: CourseSumAggregateOutputType | null
+    _min: CourseMinAggregateOutputType | null
+    _max: CourseMaxAggregateOutputType | null
+  }
+
+  export type CourseAvgAggregateOutputType = {
+    order: number | null
+  }
+
+  export type CourseSumAggregateOutputType = {
+    order: number | null
+  }
+
+  export type CourseMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    duration: string | null
+    fees: string | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CourseMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    duration: string | null
+    fees: string | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CourseCountAggregateOutputType = {
+    id: number
+    name: number
+    description: number
+    duration: number
+    fees: number
+    order: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CourseAvgAggregateInputType = {
+    order?: true
+  }
+
+  export type CourseSumAggregateInputType = {
+    order?: true
+  }
+
+  export type CourseMinAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    duration?: true
+    fees?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CourseMaxAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    duration?: true
+    fees?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CourseCountAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    duration?: true
+    fees?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CourseAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Course to aggregate.
+     */
+    where?: CourseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Courses to fetch.
+     */
+    orderBy?: CourseOrderByWithRelationInput | CourseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CourseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Courses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Courses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Courses
+    **/
+    _count?: true | CourseCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CourseAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CourseSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CourseMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CourseMaxAggregateInputType
+  }
+
+  export type GetCourseAggregateType<T extends CourseAggregateArgs> = {
+        [P in keyof T & keyof AggregateCourse]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCourse[P]>
+      : GetScalarType<T[P], AggregateCourse[P]>
+  }
+
+
+
+
+  export type CourseGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CourseWhereInput
+    orderBy?: CourseOrderByWithAggregationInput | CourseOrderByWithAggregationInput[]
+    by: CourseScalarFieldEnum[] | CourseScalarFieldEnum
+    having?: CourseScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CourseCountAggregateInputType | true
+    _avg?: CourseAvgAggregateInputType
+    _sum?: CourseSumAggregateInputType
+    _min?: CourseMinAggregateInputType
+    _max?: CourseMaxAggregateInputType
+  }
+
+  export type CourseGroupByOutputType = {
+    id: string
+    name: string
+    description: string | null
+    duration: string | null
+    fees: string | null
+    order: number
+    createdAt: Date
+    updatedAt: Date
+    _count: CourseCountAggregateOutputType | null
+    _avg: CourseAvgAggregateOutputType | null
+    _sum: CourseSumAggregateOutputType | null
+    _min: CourseMinAggregateOutputType | null
+    _max: CourseMaxAggregateOutputType | null
+  }
+
+  type GetCourseGroupByPayload<T extends CourseGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CourseGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CourseGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CourseGroupByOutputType[P]>
+            : GetScalarType<T[P], CourseGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CourseSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    duration?: boolean
+    fees?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["course"]>
+
+  export type CourseSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    duration?: boolean
+    fees?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["course"]>
+
+  export type CourseSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    duration?: boolean
+    fees?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["course"]>
+
+  export type CourseSelectScalar = {
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    duration?: boolean
+    fees?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CourseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "duration" | "fees" | "order" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
+
+  export type $CoursePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Course"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      description: string | null
+      duration: string | null
+      fees: string | null
+      order: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["course"]>
+    composites: {}
+  }
+
+  type CourseGetPayload<S extends boolean | null | undefined | CourseDefaultArgs> = $Result.GetResult<Prisma.$CoursePayload, S>
+
+  type CourseCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CourseFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CourseCountAggregateInputType | true
+    }
+
+  export interface CourseDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Course'], meta: { name: 'Course' } }
+    /**
+     * Find zero or one Course that matches the filter.
+     * @param {CourseFindUniqueArgs} args - Arguments to find a Course
+     * @example
+     * // Get one Course
+     * const course = await prisma.course.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CourseFindUniqueArgs>(args: SelectSubset<T, CourseFindUniqueArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Course that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CourseFindUniqueOrThrowArgs} args - Arguments to find a Course
+     * @example
+     * // Get one Course
+     * const course = await prisma.course.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CourseFindUniqueOrThrowArgs>(args: SelectSubset<T, CourseFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Course that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CourseFindFirstArgs} args - Arguments to find a Course
+     * @example
+     * // Get one Course
+     * const course = await prisma.course.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CourseFindFirstArgs>(args?: SelectSubset<T, CourseFindFirstArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Course that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CourseFindFirstOrThrowArgs} args - Arguments to find a Course
+     * @example
+     * // Get one Course
+     * const course = await prisma.course.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CourseFindFirstOrThrowArgs>(args?: SelectSubset<T, CourseFindFirstOrThrowArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Courses that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CourseFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Courses
+     * const courses = await prisma.course.findMany()
+     * 
+     * // Get first 10 Courses
+     * const courses = await prisma.course.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const courseWithIdOnly = await prisma.course.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CourseFindManyArgs>(args?: SelectSubset<T, CourseFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Course.
+     * @param {CourseCreateArgs} args - Arguments to create a Course.
+     * @example
+     * // Create one Course
+     * const Course = await prisma.course.create({
+     *   data: {
+     *     // ... data to create a Course
+     *   }
+     * })
+     * 
+     */
+    create<T extends CourseCreateArgs>(args: SelectSubset<T, CourseCreateArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Courses.
+     * @param {CourseCreateManyArgs} args - Arguments to create many Courses.
+     * @example
+     * // Create many Courses
+     * const course = await prisma.course.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CourseCreateManyArgs>(args?: SelectSubset<T, CourseCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Courses and returns the data saved in the database.
+     * @param {CourseCreateManyAndReturnArgs} args - Arguments to create many Courses.
+     * @example
+     * // Create many Courses
+     * const course = await prisma.course.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Courses and only return the `id`
+     * const courseWithIdOnly = await prisma.course.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CourseCreateManyAndReturnArgs>(args?: SelectSubset<T, CourseCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Course.
+     * @param {CourseDeleteArgs} args - Arguments to delete one Course.
+     * @example
+     * // Delete one Course
+     * const Course = await prisma.course.delete({
+     *   where: {
+     *     // ... filter to delete one Course
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CourseDeleteArgs>(args: SelectSubset<T, CourseDeleteArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Course.
+     * @param {CourseUpdateArgs} args - Arguments to update one Course.
+     * @example
+     * // Update one Course
+     * const course = await prisma.course.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CourseUpdateArgs>(args: SelectSubset<T, CourseUpdateArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Courses.
+     * @param {CourseDeleteManyArgs} args - Arguments to filter Courses to delete.
+     * @example
+     * // Delete a few Courses
+     * const { count } = await prisma.course.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CourseDeleteManyArgs>(args?: SelectSubset<T, CourseDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Courses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CourseUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Courses
+     * const course = await prisma.course.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CourseUpdateManyArgs>(args: SelectSubset<T, CourseUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Courses and returns the data updated in the database.
+     * @param {CourseUpdateManyAndReturnArgs} args - Arguments to update many Courses.
+     * @example
+     * // Update many Courses
+     * const course = await prisma.course.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Courses and only return the `id`
+     * const courseWithIdOnly = await prisma.course.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CourseUpdateManyAndReturnArgs>(args: SelectSubset<T, CourseUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Course.
+     * @param {CourseUpsertArgs} args - Arguments to update or create a Course.
+     * @example
+     * // Update or create a Course
+     * const course = await prisma.course.upsert({
+     *   create: {
+     *     // ... data to create a Course
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Course we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CourseUpsertArgs>(args: SelectSubset<T, CourseUpsertArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Courses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CourseCountArgs} args - Arguments to filter Courses to count.
+     * @example
+     * // Count the number of Courses
+     * const count = await prisma.course.count({
+     *   where: {
+     *     // ... the filter for the Courses we want to count
+     *   }
+     * })
+    **/
+    count<T extends CourseCountArgs>(
+      args?: Subset<T, CourseCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CourseCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Course.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CourseAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CourseAggregateArgs>(args: Subset<T, CourseAggregateArgs>): Prisma.PrismaPromise<GetCourseAggregateType<T>>
+
+    /**
+     * Group by Course.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CourseGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CourseGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CourseGroupByArgs['orderBy'] }
+        : { orderBy?: CourseGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CourseGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCourseGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Course model
+   */
+  readonly fields: CourseFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Course.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CourseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Course model
+   */
+  interface CourseFieldRefs {
+    readonly id: FieldRef<"Course", 'String'>
+    readonly name: FieldRef<"Course", 'String'>
+    readonly description: FieldRef<"Course", 'String'>
+    readonly duration: FieldRef<"Course", 'String'>
+    readonly fees: FieldRef<"Course", 'String'>
+    readonly order: FieldRef<"Course", 'Int'>
+    readonly createdAt: FieldRef<"Course", 'DateTime'>
+    readonly updatedAt: FieldRef<"Course", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Course findUnique
+   */
+  export type CourseFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * Filter, which Course to fetch.
+     */
+    where: CourseWhereUniqueInput
+  }
+
+  /**
+   * Course findUniqueOrThrow
+   */
+  export type CourseFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * Filter, which Course to fetch.
+     */
+    where: CourseWhereUniqueInput
+  }
+
+  /**
+   * Course findFirst
+   */
+  export type CourseFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * Filter, which Course to fetch.
+     */
+    where?: CourseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Courses to fetch.
+     */
+    orderBy?: CourseOrderByWithRelationInput | CourseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Courses.
+     */
+    cursor?: CourseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Courses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Courses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Courses.
+     */
+    distinct?: CourseScalarFieldEnum | CourseScalarFieldEnum[]
+  }
+
+  /**
+   * Course findFirstOrThrow
+   */
+  export type CourseFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * Filter, which Course to fetch.
+     */
+    where?: CourseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Courses to fetch.
+     */
+    orderBy?: CourseOrderByWithRelationInput | CourseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Courses.
+     */
+    cursor?: CourseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Courses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Courses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Courses.
+     */
+    distinct?: CourseScalarFieldEnum | CourseScalarFieldEnum[]
+  }
+
+  /**
+   * Course findMany
+   */
+  export type CourseFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * Filter, which Courses to fetch.
+     */
+    where?: CourseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Courses to fetch.
+     */
+    orderBy?: CourseOrderByWithRelationInput | CourseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Courses.
+     */
+    cursor?: CourseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Courses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Courses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Courses.
+     */
+    distinct?: CourseScalarFieldEnum | CourseScalarFieldEnum[]
+  }
+
+  /**
+   * Course create
+   */
+  export type CourseCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * The data needed to create a Course.
+     */
+    data: XOR<CourseCreateInput, CourseUncheckedCreateInput>
+  }
+
+  /**
+   * Course createMany
+   */
+  export type CourseCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Courses.
+     */
+    data: CourseCreateManyInput | CourseCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Course createManyAndReturn
+   */
+  export type CourseCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * The data used to create many Courses.
+     */
+    data: CourseCreateManyInput | CourseCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Course update
+   */
+  export type CourseUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * The data needed to update a Course.
+     */
+    data: XOR<CourseUpdateInput, CourseUncheckedUpdateInput>
+    /**
+     * Choose, which Course to update.
+     */
+    where: CourseWhereUniqueInput
+  }
+
+  /**
+   * Course updateMany
+   */
+  export type CourseUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Courses.
+     */
+    data: XOR<CourseUpdateManyMutationInput, CourseUncheckedUpdateManyInput>
+    /**
+     * Filter which Courses to update
+     */
+    where?: CourseWhereInput
+    /**
+     * Limit how many Courses to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Course updateManyAndReturn
+   */
+  export type CourseUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * The data used to update Courses.
+     */
+    data: XOR<CourseUpdateManyMutationInput, CourseUncheckedUpdateManyInput>
+    /**
+     * Filter which Courses to update
+     */
+    where?: CourseWhereInput
+    /**
+     * Limit how many Courses to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Course upsert
+   */
+  export type CourseUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * The filter to search for the Course to update in case it exists.
+     */
+    where: CourseWhereUniqueInput
+    /**
+     * In case the Course found by the `where` argument doesn't exist, create a new Course with this data.
+     */
+    create: XOR<CourseCreateInput, CourseUncheckedCreateInput>
+    /**
+     * In case the Course was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CourseUpdateInput, CourseUncheckedUpdateInput>
+  }
+
+  /**
+   * Course delete
+   */
+  export type CourseDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
+     * Filter which Course to delete.
+     */
+    where: CourseWhereUniqueInput
+  }
+
+  /**
+   * Course deleteMany
+   */
+  export type CourseDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Courses to delete
+     */
+    where?: CourseWhereInput
+    /**
+     * Limit how many Courses to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Course without action
+   */
+  export type CourseDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Course
+     */
+    select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -10144,10 +12548,26 @@ export namespace Prisma {
   export const FaqScalarFieldEnum: {
     id: 'id',
     question: 'question',
-    answer: 'answer'
+    answer: 'answer',
+    source: 'source'
   };
 
   export type FaqScalarFieldEnum = (typeof FaqScalarFieldEnum)[keyof typeof FaqScalarFieldEnum]
+
+
+  export const KnowledgeFileScalarFieldEnum: {
+    id: 'id',
+    filename: 'filename',
+    fileType: 'fileType',
+    fileSize: 'fileSize',
+    entries: 'entries',
+    status: 'status',
+    error: 'error',
+    uploadedBy: 'uploadedBy',
+    createdAt: 'createdAt'
+  };
+
+  export type KnowledgeFileScalarFieldEnum = (typeof KnowledgeFileScalarFieldEnum)[keyof typeof KnowledgeFileScalarFieldEnum]
 
 
   export const LeadScalarFieldEnum: {
@@ -10187,6 +12607,8 @@ export namespace Prisma {
     email: 'email',
     password: 'password',
     role: 'role',
+    contactNumber: 'contactNumber',
+    profilePicture: 'profilePicture',
     createdAt: 'createdAt'
   };
 
@@ -10216,6 +12638,20 @@ export namespace Prisma {
   };
 
   export type ConversationMessageScalarFieldEnum = (typeof ConversationMessageScalarFieldEnum)[keyof typeof ConversationMessageScalarFieldEnum]
+
+
+  export const CourseScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    description: 'description',
+    duration: 'duration',
+    fees: 'fees',
+    order: 'order',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -10283,20 +12719,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'LeadStatus'
-   */
-  export type EnumLeadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadStatus'>
-    
-
-
-  /**
-   * Reference to a field of type 'LeadStatus[]'
-   */
-  export type ListEnumLeadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadStatus[]'>
-    
-
-
-  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -10307,6 +12729,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'LeadStatus'
+   */
+  export type EnumLeadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'LeadStatus[]'
+   */
+  export type ListEnumLeadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadStatus[]'>
     
 
 
@@ -10335,6 +12771,20 @@ export namespace Prisma {
    * Reference to a field of type 'AppointmentStatus[]'
    */
   export type ListEnumAppointmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppointmentStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AdminRole'
+   */
+  export type EnumAdminRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdminRole'>
+    
+
+
+  /**
+   * Reference to a field of type 'AdminRole[]'
+   */
+  export type ListEnumAdminRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdminRole[]'>
     
 
 
@@ -10466,12 +12916,14 @@ export namespace Prisma {
     id?: StringFilter<"Faq"> | string
     question?: StringFilter<"Faq"> | string
     answer?: StringFilter<"Faq"> | string
+    source?: StringNullableFilter<"Faq"> | string | null
   }
 
   export type FaqOrderByWithRelationInput = {
     id?: SortOrder
     question?: SortOrder
     answer?: SortOrder
+    source?: SortOrderInput | SortOrder
   }
 
   export type FaqWhereUniqueInput = Prisma.AtLeast<{
@@ -10481,12 +12933,14 @@ export namespace Prisma {
     NOT?: FaqWhereInput | FaqWhereInput[]
     question?: StringFilter<"Faq"> | string
     answer?: StringFilter<"Faq"> | string
+    source?: StringNullableFilter<"Faq"> | string | null
   }, "id">
 
   export type FaqOrderByWithAggregationInput = {
     id?: SortOrder
     question?: SortOrder
     answer?: SortOrder
+    source?: SortOrderInput | SortOrder
     _count?: FaqCountOrderByAggregateInput
     _max?: FaqMaxOrderByAggregateInput
     _min?: FaqMinOrderByAggregateInput
@@ -10499,6 +12953,81 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Faq"> | string
     question?: StringWithAggregatesFilter<"Faq"> | string
     answer?: StringWithAggregatesFilter<"Faq"> | string
+    source?: StringNullableWithAggregatesFilter<"Faq"> | string | null
+  }
+
+  export type KnowledgeFileWhereInput = {
+    AND?: KnowledgeFileWhereInput | KnowledgeFileWhereInput[]
+    OR?: KnowledgeFileWhereInput[]
+    NOT?: KnowledgeFileWhereInput | KnowledgeFileWhereInput[]
+    id?: StringFilter<"KnowledgeFile"> | string
+    filename?: StringFilter<"KnowledgeFile"> | string
+    fileType?: StringFilter<"KnowledgeFile"> | string
+    fileSize?: IntFilter<"KnowledgeFile"> | number
+    entries?: IntFilter<"KnowledgeFile"> | number
+    status?: StringFilter<"KnowledgeFile"> | string
+    error?: StringNullableFilter<"KnowledgeFile"> | string | null
+    uploadedBy?: StringFilter<"KnowledgeFile"> | string
+    createdAt?: DateTimeFilter<"KnowledgeFile"> | Date | string
+  }
+
+  export type KnowledgeFileOrderByWithRelationInput = {
+    id?: SortOrder
+    filename?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    entries?: SortOrder
+    status?: SortOrder
+    error?: SortOrderInput | SortOrder
+    uploadedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type KnowledgeFileWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: KnowledgeFileWhereInput | KnowledgeFileWhereInput[]
+    OR?: KnowledgeFileWhereInput[]
+    NOT?: KnowledgeFileWhereInput | KnowledgeFileWhereInput[]
+    filename?: StringFilter<"KnowledgeFile"> | string
+    fileType?: StringFilter<"KnowledgeFile"> | string
+    fileSize?: IntFilter<"KnowledgeFile"> | number
+    entries?: IntFilter<"KnowledgeFile"> | number
+    status?: StringFilter<"KnowledgeFile"> | string
+    error?: StringNullableFilter<"KnowledgeFile"> | string | null
+    uploadedBy?: StringFilter<"KnowledgeFile"> | string
+    createdAt?: DateTimeFilter<"KnowledgeFile"> | Date | string
+  }, "id">
+
+  export type KnowledgeFileOrderByWithAggregationInput = {
+    id?: SortOrder
+    filename?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    entries?: SortOrder
+    status?: SortOrder
+    error?: SortOrderInput | SortOrder
+    uploadedBy?: SortOrder
+    createdAt?: SortOrder
+    _count?: KnowledgeFileCountOrderByAggregateInput
+    _avg?: KnowledgeFileAvgOrderByAggregateInput
+    _max?: KnowledgeFileMaxOrderByAggregateInput
+    _min?: KnowledgeFileMinOrderByAggregateInput
+    _sum?: KnowledgeFileSumOrderByAggregateInput
+  }
+
+  export type KnowledgeFileScalarWhereWithAggregatesInput = {
+    AND?: KnowledgeFileScalarWhereWithAggregatesInput | KnowledgeFileScalarWhereWithAggregatesInput[]
+    OR?: KnowledgeFileScalarWhereWithAggregatesInput[]
+    NOT?: KnowledgeFileScalarWhereWithAggregatesInput | KnowledgeFileScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"KnowledgeFile"> | string
+    filename?: StringWithAggregatesFilter<"KnowledgeFile"> | string
+    fileType?: StringWithAggregatesFilter<"KnowledgeFile"> | string
+    fileSize?: IntWithAggregatesFilter<"KnowledgeFile"> | number
+    entries?: IntWithAggregatesFilter<"KnowledgeFile"> | number
+    status?: StringWithAggregatesFilter<"KnowledgeFile"> | string
+    error?: StringNullableWithAggregatesFilter<"KnowledgeFile"> | string | null
+    uploadedBy?: StringWithAggregatesFilter<"KnowledgeFile"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"KnowledgeFile"> | Date | string
   }
 
   export type LeadWhereInput = {
@@ -10658,7 +13187,9 @@ export namespace Prisma {
     name?: StringFilter<"Admin"> | string
     email?: StringFilter<"Admin"> | string
     password?: StringFilter<"Admin"> | string
-    role?: StringFilter<"Admin"> | string
+    role?: EnumAdminRoleFilter<"Admin"> | $Enums.AdminRole
+    contactNumber?: StringNullableFilter<"Admin"> | string | null
+    profilePicture?: StringNullableFilter<"Admin"> | string | null
     createdAt?: DateTimeFilter<"Admin"> | Date | string
   }
 
@@ -10668,6 +13199,8 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    contactNumber?: SortOrderInput | SortOrder
+    profilePicture?: SortOrderInput | SortOrder
     createdAt?: SortOrder
   }
 
@@ -10679,7 +13212,9 @@ export namespace Prisma {
     NOT?: AdminWhereInput | AdminWhereInput[]
     name?: StringFilter<"Admin"> | string
     password?: StringFilter<"Admin"> | string
-    role?: StringFilter<"Admin"> | string
+    role?: EnumAdminRoleFilter<"Admin"> | $Enums.AdminRole
+    contactNumber?: StringNullableFilter<"Admin"> | string | null
+    profilePicture?: StringNullableFilter<"Admin"> | string | null
     createdAt?: DateTimeFilter<"Admin"> | Date | string
   }, "id" | "email">
 
@@ -10689,6 +13224,8 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    contactNumber?: SortOrderInput | SortOrder
+    profilePicture?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: AdminCountOrderByAggregateInput
     _max?: AdminMaxOrderByAggregateInput
@@ -10703,7 +13240,9 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Admin"> | string
     email?: StringWithAggregatesFilter<"Admin"> | string
     password?: StringWithAggregatesFilter<"Admin"> | string
-    role?: StringWithAggregatesFilter<"Admin"> | string
+    role?: EnumAdminRoleWithAggregatesFilter<"Admin"> | $Enums.AdminRole
+    contactNumber?: StringNullableWithAggregatesFilter<"Admin"> | string | null
+    profilePicture?: StringNullableWithAggregatesFilter<"Admin"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Admin"> | Date | string
   }
 
@@ -10834,6 +13373,75 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"ConversationMessage"> | Date | string
   }
 
+  export type CourseWhereInput = {
+    AND?: CourseWhereInput | CourseWhereInput[]
+    OR?: CourseWhereInput[]
+    NOT?: CourseWhereInput | CourseWhereInput[]
+    id?: StringFilter<"Course"> | string
+    name?: StringFilter<"Course"> | string
+    description?: StringNullableFilter<"Course"> | string | null
+    duration?: StringNullableFilter<"Course"> | string | null
+    fees?: StringNullableFilter<"Course"> | string | null
+    order?: IntFilter<"Course"> | number
+    createdAt?: DateTimeFilter<"Course"> | Date | string
+    updatedAt?: DateTimeFilter<"Course"> | Date | string
+  }
+
+  export type CourseOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    duration?: SortOrderInput | SortOrder
+    fees?: SortOrderInput | SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CourseWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CourseWhereInput | CourseWhereInput[]
+    OR?: CourseWhereInput[]
+    NOT?: CourseWhereInput | CourseWhereInput[]
+    name?: StringFilter<"Course"> | string
+    description?: StringNullableFilter<"Course"> | string | null
+    duration?: StringNullableFilter<"Course"> | string | null
+    fees?: StringNullableFilter<"Course"> | string | null
+    order?: IntFilter<"Course"> | number
+    createdAt?: DateTimeFilter<"Course"> | Date | string
+    updatedAt?: DateTimeFilter<"Course"> | Date | string
+  }, "id">
+
+  export type CourseOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    duration?: SortOrderInput | SortOrder
+    fees?: SortOrderInput | SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CourseCountOrderByAggregateInput
+    _avg?: CourseAvgOrderByAggregateInput
+    _max?: CourseMaxOrderByAggregateInput
+    _min?: CourseMinOrderByAggregateInput
+    _sum?: CourseSumOrderByAggregateInput
+  }
+
+  export type CourseScalarWhereWithAggregatesInput = {
+    AND?: CourseScalarWhereWithAggregatesInput | CourseScalarWhereWithAggregatesInput[]
+    OR?: CourseScalarWhereWithAggregatesInput[]
+    NOT?: CourseScalarWhereWithAggregatesInput | CourseScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Course"> | string
+    name?: StringWithAggregatesFilter<"Course"> | string
+    description?: StringNullableWithAggregatesFilter<"Course"> | string | null
+    duration?: StringNullableWithAggregatesFilter<"Course"> | string | null
+    fees?: StringNullableWithAggregatesFilter<"Course"> | string | null
+    order?: IntWithAggregatesFilter<"Course"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"Course"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Course"> | Date | string
+  }
+
   export type UserCreateInput = {
     email: string
     name?: string | null
@@ -10933,42 +13541,133 @@ export namespace Prisma {
     id?: string
     question: string
     answer: string
+    source?: string | null
   }
 
   export type FaqUncheckedCreateInput = {
     id?: string
     question: string
     answer: string
+    source?: string | null
   }
 
   export type FaqUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     question?: StringFieldUpdateOperationsInput | string
     answer?: StringFieldUpdateOperationsInput | string
+    source?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FaqUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     question?: StringFieldUpdateOperationsInput | string
     answer?: StringFieldUpdateOperationsInput | string
+    source?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FaqCreateManyInput = {
     id?: string
     question: string
     answer: string
+    source?: string | null
   }
 
   export type FaqUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     question?: StringFieldUpdateOperationsInput | string
     answer?: StringFieldUpdateOperationsInput | string
+    source?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FaqUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     question?: StringFieldUpdateOperationsInput | string
     answer?: StringFieldUpdateOperationsInput | string
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type KnowledgeFileCreateInput = {
+    id?: string
+    filename: string
+    fileType: string
+    fileSize: number
+    entries?: number
+    status?: string
+    error?: string | null
+    uploadedBy: string
+    createdAt?: Date | string
+  }
+
+  export type KnowledgeFileUncheckedCreateInput = {
+    id?: string
+    filename: string
+    fileType: string
+    fileSize: number
+    entries?: number
+    status?: string
+    error?: string | null
+    uploadedBy: string
+    createdAt?: Date | string
+  }
+
+  export type KnowledgeFileUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    entries?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KnowledgeFileUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    entries?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KnowledgeFileCreateManyInput = {
+    id?: string
+    filename: string
+    fileType: string
+    fileSize: number
+    entries?: number
+    status?: string
+    error?: string | null
+    uploadedBy: string
+    createdAt?: Date | string
+  }
+
+  export type KnowledgeFileUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    entries?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KnowledgeFileUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    entries?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LeadCreateInput = {
@@ -11151,7 +13850,9 @@ export namespace Prisma {
     name: string
     email: string
     password: string
-    role?: string
+    role?: $Enums.AdminRole
+    contactNumber?: string | null
+    profilePicture?: string | null
     createdAt?: Date | string
   }
 
@@ -11160,7 +13861,9 @@ export namespace Prisma {
     name: string
     email: string
     password: string
-    role?: string
+    role?: $Enums.AdminRole
+    contactNumber?: string | null
+    profilePicture?: string | null
     createdAt?: Date | string
   }
 
@@ -11169,7 +13872,9 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    role?: StringFieldUpdateOperationsInput | string
+    role?: EnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -11178,7 +13883,9 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    role?: StringFieldUpdateOperationsInput | string
+    role?: EnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -11187,7 +13894,9 @@ export namespace Prisma {
     name: string
     email: string
     password: string
-    role?: string
+    role?: $Enums.AdminRole
+    contactNumber?: string | null
+    profilePicture?: string | null
     createdAt?: Date | string
   }
 
@@ -11196,7 +13905,9 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    role?: StringFieldUpdateOperationsInput | string
+    role?: EnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -11205,7 +13916,9 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    role?: StringFieldUpdateOperationsInput | string
+    role?: EnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -11343,6 +14056,83 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CourseCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    duration?: string | null
+    fees?: string | null
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CourseUncheckedCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    duration?: string | null
+    fees?: string | null
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CourseUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    fees?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CourseUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    fees?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CourseCreateManyInput = {
+    id?: string
+    name: string
+    description?: string | null
+    duration?: string | null
+    fees?: string | null
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CourseUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    fees?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CourseUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    fees?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -11535,25 +14325,21 @@ export namespace Prisma {
     id?: SortOrder
     question?: SortOrder
     answer?: SortOrder
+    source?: SortOrder
   }
 
   export type FaqMaxOrderByAggregateInput = {
     id?: SortOrder
     question?: SortOrder
     answer?: SortOrder
+    source?: SortOrder
   }
 
   export type FaqMinOrderByAggregateInput = {
     id?: SortOrder
     question?: SortOrder
     answer?: SortOrder
-  }
-
-  export type EnumLeadStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.LeadStatus | EnumLeadStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumLeadStatusFilter<$PrismaModel> | $Enums.LeadStatus
+    source?: SortOrder
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -11565,6 +14351,73 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type KnowledgeFileCountOrderByAggregateInput = {
+    id?: SortOrder
+    filename?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    entries?: SortOrder
+    status?: SortOrder
+    error?: SortOrder
+    uploadedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type KnowledgeFileAvgOrderByAggregateInput = {
+    fileSize?: SortOrder
+    entries?: SortOrder
+  }
+
+  export type KnowledgeFileMaxOrderByAggregateInput = {
+    id?: SortOrder
+    filename?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    entries?: SortOrder
+    status?: SortOrder
+    error?: SortOrder
+    uploadedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type KnowledgeFileMinOrderByAggregateInput = {
+    id?: SortOrder
+    filename?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    entries?: SortOrder
+    status?: SortOrder
+    error?: SortOrder
+    uploadedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type KnowledgeFileSumOrderByAggregateInput = {
+    fileSize?: SortOrder
+    entries?: SortOrder
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type EnumLeadStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.LeadStatus | EnumLeadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumLeadStatusFilter<$PrismaModel> | $Enums.LeadStatus
   }
 
   export type LeadCountOrderByAggregateInput = {
@@ -11611,20 +14464,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumLeadStatusFilter<$PrismaModel>
     _max?: NestedEnumLeadStatusFilter<$PrismaModel>
-  }
-
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type EnumAppointmentTypeFilter<$PrismaModel = never> = {
@@ -11700,12 +14539,21 @@ export namespace Prisma {
     _max?: NestedEnumAppointmentStatusFilter<$PrismaModel>
   }
 
+  export type EnumAdminRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdminRole | EnumAdminRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.AdminRole[] | ListEnumAdminRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdminRole[] | ListEnumAdminRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdminRoleFilter<$PrismaModel> | $Enums.AdminRole
+  }
+
   export type AdminCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    contactNumber?: SortOrder
+    profilePicture?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -11715,6 +14563,8 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    contactNumber?: SortOrder
+    profilePicture?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -11724,7 +14574,19 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    contactNumber?: SortOrder
+    profilePicture?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type EnumAdminRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdminRole | EnumAdminRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.AdminRole[] | ListEnumAdminRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdminRole[] | ListEnumAdminRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdminRoleWithAggregatesFilter<$PrismaModel> | $Enums.AdminRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAdminRoleFilter<$PrismaModel>
+    _max?: NestedEnumAdminRoleFilter<$PrismaModel>
   }
 
   export type ConversationMessageListRelationFilter = {
@@ -11807,6 +14669,47 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type CourseCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    duration?: SortOrder
+    fees?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CourseAvgOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type CourseMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    duration?: SortOrder
+    fees?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CourseMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    duration?: SortOrder
+    fees?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CourseSumOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
   export type PostCreateNestedManyWithoutAuthorInput = {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: PostCreateOrConnectWithoutAuthorInput | PostCreateOrConnectWithoutAuthorInput[]
@@ -11883,12 +14786,12 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPostsInput, UserUpdateWithoutPostsInput>, UserUncheckedUpdateWithoutPostsInput>
   }
 
-  export type EnumLeadStatusFieldUpdateOperationsInput = {
-    set?: $Enums.LeadStatus
-  }
-
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type EnumLeadStatusFieldUpdateOperationsInput = {
+    set?: $Enums.LeadStatus
   }
 
   export type EnumAppointmentTypeFieldUpdateOperationsInput = {
@@ -11897,6 +14800,10 @@ export namespace Prisma {
 
   export type EnumAppointmentStatusFieldUpdateOperationsInput = {
     set?: $Enums.AppointmentStatus
+  }
+
+  export type EnumAdminRoleFieldUpdateOperationsInput = {
+    set?: $Enums.AdminRole
   }
 
   export type ConversationMessageCreateNestedManyWithoutConversationInput = {
@@ -12079,13 +14986,6 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type NestedEnumLeadStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.LeadStatus | EnumLeadStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumLeadStatusFilter<$PrismaModel> | $Enums.LeadStatus
-  }
-
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -12095,16 +14995,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type NestedEnumLeadStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.LeadStatus | EnumLeadStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumLeadStatusWithAggregatesFilter<$PrismaModel> | $Enums.LeadStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumLeadStatusFilter<$PrismaModel>
-    _max?: NestedEnumLeadStatusFilter<$PrismaModel>
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -12119,6 +15009,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumLeadStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.LeadStatus | EnumLeadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumLeadStatusFilter<$PrismaModel> | $Enums.LeadStatus
+  }
+
+  export type NestedEnumLeadStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.LeadStatus | EnumLeadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LeadStatus[] | ListEnumLeadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumLeadStatusWithAggregatesFilter<$PrismaModel> | $Enums.LeadStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumLeadStatusFilter<$PrismaModel>
+    _max?: NestedEnumLeadStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumAppointmentTypeFilter<$PrismaModel = never> = {
@@ -12153,6 +15060,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumAppointmentStatusFilter<$PrismaModel>
     _max?: NestedEnumAppointmentStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAdminRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdminRole | EnumAdminRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.AdminRole[] | ListEnumAdminRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdminRole[] | ListEnumAdminRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdminRoleFilter<$PrismaModel> | $Enums.AdminRole
+  }
+
+  export type NestedEnumAdminRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdminRole | EnumAdminRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.AdminRole[] | ListEnumAdminRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdminRole[] | ListEnumAdminRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdminRoleWithAggregatesFilter<$PrismaModel> | $Enums.AdminRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAdminRoleFilter<$PrismaModel>
+    _max?: NestedEnumAdminRoleFilter<$PrismaModel>
   }
 
   export type PostCreateWithoutAuthorInput = {

@@ -14,6 +14,7 @@ import {
   INSTITUTE_ADDRESS,
   bookAppointment,
 } from "@/lib/scheduler/calendar";
+import { shouldUseReactServerCondition } from "next/dist/build/utils";
 
 // ================= HARDCODED COURSES =================
 const COURSES = [
@@ -298,7 +299,7 @@ export async function POST(req: Request) {
         return respond(sessionId, message,
           `🎉 Thank you, ${updatedLeadInfo.name}! Your interest in the ${updatedLeadInfo.course} course has been registered. Our admissions team will contact you at ${updatedLeadInfo.phone} shortly!`,
           { ...updatedLeadInfo, collected: true },
-          { isEnrolling: false },
+          { isEnrolling: false, SharedWorker: false },
           getSuggestions("enrolled")
         );
       }
@@ -316,7 +317,6 @@ export async function POST(req: Request) {
     }
 
     if (intent === "courses") {
-      // ✅ Using hardcoded courses instead of prisma.course.findMany()
       return respond(sessionId, message,
         "Here are our available courses! 🎓 Tap Interested to enroll or Know More to learn about a course:",
         leadInfo,
@@ -340,7 +340,7 @@ export async function POST(req: Request) {
       return respond(sessionId, message,
         `Great! I'd love to help you with enrollment. ${nextQuestion}`,
         updatedLeadInfo,
-        { isEnrolling: true, isScheduling: false },
+        { isEnrolling: true, isScheduling: false, showcourses: false },
         getSuggestions("interest")
       );
     }
@@ -353,12 +353,24 @@ export async function POST(req: Request) {
         getSuggestions("schedule")
       );
     }
+const structured = await getAIResponse(message, leadInfo);
+const replyText = structured.components
+  .filter((c) => c.type === "text")
+  .map((c) => (c as any).content)
+  .join(" ") || "Here's what I found!";
 
-    const reply = await getAIResponse(message, leadInfo);
-    return respond(sessionId, message, reply, leadInfo, {
-      isEnrolling: false,
-      isScheduling: false,
-    }, getSuggestions("faq"));
+if (sessionId) {
+  await saveMessage(sessionId, "user", message, leadInfo);
+  await saveMessage(sessionId, "bot", replyText, leadInfo);
+}
+
+return NextResponse.json({
+  structured,
+  leadInfo,
+  suggestions: [],
+  isEnrolling: false,
+  isScheduling: false,
+});
 
   } catch (error) {
     console.error(error);

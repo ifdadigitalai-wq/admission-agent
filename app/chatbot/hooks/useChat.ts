@@ -1,11 +1,12 @@
 "use client";
-
+import { StructuredResponse } from "@/lib/ai/llm";
 import { useState, useRef } from "react";
 
 type Message = {
   role: "user" | "bot";
   content: string;
-  image?: string; // Standardized to lowercase 'image' for consistency
+  image?: string; 
+  structured?: StructuredResponse;
 };
 
 type LeadInfo = {
@@ -90,15 +91,19 @@ export default function useChat() {
       if (data.scheduleData) setScheduleData(data.scheduleData);
       if (data.availableDates) setAvailableDates(data.availableDates);
       if (data.suggestions) setSuggestions(data.suggestions);
+      // Inside sendMessage, after getting response:
       if (typeof data.showCourses === "boolean") setShowCourses(data.showCourses);
+      else setShowCourses(false); 
       if (data.courses) setCourses(data.courses);
 
-      const botMessage: Message = {
-        role: "bot",
-        content: data.reply || "I'm sorry, I couldn't process that.",
-      };
-
-      setMessages((prev) => [...prev, botMessage]);
+     const botMessage: Message = {
+            role: "bot",
+            content: data.structured
+    ? data.structured.components.filter((c: any) => c.type === "text").map((c: any) => c.content).join(" ")
+    : data.reply || "I'm sorry, I couldn't process that.",
+  structured: data.structured || undefined,
+};
+   setMessages((prev) => [...prev, botMessage]);
     } catch (err) {
       console.error(err);
       setMessages((prev) => [
@@ -138,6 +143,7 @@ export default function useChat() {
     resetSession,
     suggestions,
     showCourses,
+    setShowCourses,
     courses,
   };
 }

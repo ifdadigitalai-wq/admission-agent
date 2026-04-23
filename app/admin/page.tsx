@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { hasPermission, getDefaultPage } from "@/lib/auth/permissions";
 
 type Lead = {
   id: string;
@@ -123,15 +125,18 @@ const CSS = `
   .course-cell { font-weight: 500; font-size: 13px; }
   .date-cell { font-size: 12px; color: var(--muted); }
 
-  /* Badges */
+  /* Badges — keyed to the canonical status values */
   .badge { 
     display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; 
     font-size: 11px; font-weight: 600; letter-spacing: 0.02em; 
   }
-  .badge-PENDING   { background: #fffbeb; color: #92400e; }
-  .badge-CONTACTED { background: #eff6ff; color: #1e40af; }
-  .badge-CONVERTED { background: #ecfdf5; color: #065f46; }
-  .badge-REJECTED  { background: #fef2f2; color: #991b1b; }
+  .badge-NEW_LEAD          { background: #fffbeb; color: #92400e; }
+  .badge-INTERESTED        { background: #eff6ff; color: #1e40af; }
+  .badge-PENDING_FOLLOW_UP { background: #f0fdf4; color: #166534; }
+  .badge-HOT_LEAD          { background: #fff7ed; color: #9a3412; }
+  .badge-NOT_INTERESTED    { background: #fef2f2; color: #991b1b; }
+  .badge-CONVERTED         { background: #f0fdf4; color: #065f46; }
+  .badge-REJECTED          { background: #fef2f2; color: #7f1d1d; }
 
   /* Inline Inputs */
   .status-select {
@@ -161,17 +166,58 @@ const CSS = `
   @keyframes slideIn { from{opacity:0; transform: translateY(20px)} to{opacity:1; transform: translateY(0)} }
 `;
 
+// Single source of truth for all status values used throughout the file
+const STATUS = {
+  NEW_LEAD:          "NEW_LEAD",
+  INTERESTED:        "INTERESTED",
+  PENDING_FOLLOW_UP: "PENDING_FOLLOW_UP",
+  HOT_LEAD:          "HOT_LEAD",
+  NOT_INTERESTED:    "NOT_INTERESTED",
+  CONVERTED:         "CONVERTED",
+  REJECTED:          "REJECTED",
+} as const;
+
+type StatusKey = keyof typeof STATUS;
+
+const STATUS_LABELS: Record<string, string> = {
+  NEW_LEAD:          "New Lead",
+  INTERESTED:        "Interested",
+  PENDING_FOLLOW_UP: "Pending Follow-up",
+  HOT_LEAD:          "Hot Lead",
+  NOT_INTERESTED:    "Not Interested",
+  CONVERTED:         "Converted",
+  REJECTED:          "Rejected",
+};
+
 export default function AdminLeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [toast, setToast] = useState("");
+  const router = useRouter();
 
   const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
   const authHeaders: HeadersInit = token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
 
+  // Auth + permission check
   useEffect(() => {
+    fetch("/api/admin/auth/me", { headers: authHeaders })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.error) { router.push("/admin/login"); return; }
+        if (!hasPermission(data.admin.role, "leads")) {
+          router.push(getDefaultPage(data.admin.role));
+          return;
+        }
+        setAuthorized(true);
+      })
+      .catch(() => router.push("/admin/login"));
+  }, []);
+
+  useEffect(() => {
+    if (!authorized) return;
     fetch("/api/admin/leads", { headers: authHeaders })
       .then((res) => res.json())
       .then((data) => {
@@ -179,7 +225,7 @@ export default function AdminLeadsPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [authorized]);
 
   const updateLead = async (id: string, status: string, notes: string) => {
     await fetch(`/api/admin/leads/${id}`, {
@@ -205,12 +251,16 @@ export default function AdminLeadsPage() {
     return matchSearch && matchStatus;
   });
 
+  // All counts use the same canonical STATUS values
   const counts = {
-    total: leads.length,
-    pending: leads.filter((l) => l.status === "PENDING").length,
-    contacted: leads.filter((l) => l.status === "CONTACTED").length,
-    converted: leads.filter((l) => l.status === "CONVERTED").length,
-    rejected: leads.filter((l) => l.status === "REJECTED").length,
+    total:            leads.length,
+    NEW_LEAD:         leads.filter((l) => l.status === STATUS.NEW_LEAD).length,
+    INTERESTED:       leads.filter((l) => l.status === STATUS.INTERESTED).length,
+    PENDING_FOLLOW_UP:leads.filter((l) => l.status === STATUS.PENDING_FOLLOW_UP).length,
+    HOT_LEAD:         leads.filter((l) => l.status === STATUS.HOT_LEAD).length,
+    NOT_INTERESTED:   leads.filter((l) => l.status === STATUS.NOT_INTERESTED).length,
+    CONVERTED:        leads.filter((l) => l.status === STATUS.CONVERTED).length,
+    REJECTED:         leads.filter((l) => l.status === STATUS.REJECTED).length,
   };
 
   if (loading) return (
@@ -248,11 +298,14 @@ export default function AdminLeadsPage() {
 
           <div className="stats-row">
             {[
-              { label: "Total Leads", value: counts.total, color: "var(--accent)" },
-              { label: "Pipeline", value: counts.pending, color: "var(--warning)" },
-              { label: "Active", value: counts.contacted, color: "var(--accent)" },
-              { label: "Conversions", value: counts.converted, color: "var(--success)" },
-              { label: "Closed", value: counts.rejected, color: "var(--danger)" },
+              { label: "Total Leads",       value: counts.total,             color: "var(--accent)"  },
+              { label: "New Leads",         value: counts.NEW_LEAD,          color: "var(--warning)" },
+              { label: "Interested",        value: counts.INTERESTED,        color: "var(--accent)"  },
+              { label: "Pending Follow-up", value: counts.PENDING_FOLLOW_UP, color: "var(--success)" },
+              { label: "Hot Leads",         value: counts.HOT_LEAD,          color: "var(--danger)"  },
+              { label: "Not Interested",    value: counts.NOT_INTERESTED,    color: "var(--muted)"   },
+              { label: "Converted",         value: counts.CONVERTED,         color: "var(--success)" },
+              { label: "Rejected",          value: counts.REJECTED,          color: "var(--danger)"  },
             ].map((s) => (
               <div key={s.label} className="stat-pill">
                 <span className="stat-pill-label">{s.label}</span>
@@ -278,10 +331,9 @@ export default function AdminLeadsPage() {
               onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="ALL">All Lifecycle Stages</option>
-              <option value="PENDING">Pending Inquiries</option>
-              <option value="CONTACTED">Currently Contacted</option>
-              <option value="CONVERTED">Enrollment Converted</option>
-              <option value="REJECTED">Inquiry Rejected</option>
+              {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
             </select>
           </div>
 
@@ -310,7 +362,10 @@ export default function AdminLeadsPage() {
                     <td className="phone-cell">{lead.phone}</td>
                     <td className="course-cell">{lead.course}</td>
                     <td>
-                      <span className={`badge badge-${lead.status}`}>{lead.status}</span>
+                      {/* badge class matches badge-{STATUS_VALUE} in CSS exactly */}
+                      <span className={`badge badge-${lead.status}`}>
+                        {STATUS_LABELS[lead.status] ?? lead.status}
+                      </span>
                     </td>
                     <td>
                       <select
@@ -318,10 +373,9 @@ export default function AdminLeadsPage() {
                         value={lead.status}
                         onChange={(e) => updateLead(lead.id, e.target.value, lead.notes || "")}
                       >
-                        <option value="PENDING">Pending</option>
-                        <option value="CONTACTED">Contacted</option>
-                        <option value="CONVERTED">Converted</option>
-                        <option value="REJECTED">Rejected</option>
+                        {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                          <option key={value} value={value}>{label}</option>
+                        ))}
                       </select>
                     </td>
                     <td>

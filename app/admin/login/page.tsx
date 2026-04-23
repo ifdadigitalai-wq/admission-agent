@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getDefaultPage } from "@/lib/auth/permissions";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -39,7 +40,9 @@ export default function AdminLogin() {
           headers: { Authorization: `Bearer ${data.token}` },
         });
         if (me.ok) {
-          router.push("/admin/dashboard");
+          const meData = await me.json();
+          const role = meData.admin?.role || "admin";
+          router.push(getDefaultPage(role));
         } else {
           setError("Login succeeded but could not verify session.");
         }

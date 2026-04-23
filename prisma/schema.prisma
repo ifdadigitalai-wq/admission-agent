@@ -36,7 +36,20 @@ model Faq {
   id        String                      @id @default(uuid())
   question  String
   answer    String
+  source    String?                     // "seed" | "upload:<fileId>"
   embedding Unsupported("vector(768)")?
+}
+
+model KnowledgeFile {
+  id         String   @id @default(uuid())
+  filename   String
+  fileType   String   // txt, csv, json, pdf
+  fileSize   Int
+  entries    Int      @default(0)
+  status     String   @default("processing") // processing, completed, failed
+  error      String?
+  uploadedBy String
+  createdAt  DateTime @default(now())
 }
 
 model Lead {
@@ -73,13 +86,29 @@ model Appointment {
   status    AppointmentStatus @default(SCHEDULED)
   createdAt DateTime          @default(now())
 }
+
+enum AdminRole {
+  ADMIN
+  COUNSELOR
+  TELECALLER   // Existing
+  MANAGER      // Existing
+  SUPPORT
+  MANAGEMENT   // New
+  SALES        // New
+  TELE_CALLER  // New (Mapped from "Tele caller")
+  DEVELOPER    // New
+  MARKETING    // New
+}
+
 model Admin {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String   // bcrypt hashed
-  role      String   @default("admin")
-  createdAt DateTime @default(now())
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  password       String    // bcrypt hashed
+  role           AdminRole @default(ADMIN)
+  contactNumber  String?   // Added for the Members UI
+  profilePicture String?   // Added for the Members UI (URL or path to the image)
+  createdAt      DateTime  @default(now())
 }
 
 model Conversation {

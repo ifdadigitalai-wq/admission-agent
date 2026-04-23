@@ -137,7 +137,20 @@ exports.Prisma.PostScalarFieldEnum = {
 exports.Prisma.FaqScalarFieldEnum = {
   id: 'id',
   question: 'question',
-  answer: 'answer'
+  answer: 'answer',
+  source: 'source'
+};
+
+exports.Prisma.KnowledgeFileScalarFieldEnum = {
+  id: 'id',
+  filename: 'filename',
+  fileType: 'fileType',
+  fileSize: 'fileSize',
+  entries: 'entries',
+  status: 'status',
+  error: 'error',
+  uploadedBy: 'uploadedBy',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.LeadScalarFieldEnum = {
@@ -171,6 +184,8 @@ exports.Prisma.AdminScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  contactNumber: 'contactNumber',
+  profilePicture: 'profilePicture',
   createdAt: 'createdAt'
 };
 
@@ -191,6 +206,17 @@ exports.Prisma.ConversationMessageScalarFieldEnum = {
   role: 'role',
   content: 'content',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.CourseScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  duration: 'duration',
+  fees: 'fees',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -225,15 +251,30 @@ exports.AppointmentStatus = exports.$Enums.AppointmentStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.AdminRole = exports.$Enums.AdminRole = {
+  ADMIN: 'ADMIN',
+  COUNSELOR: 'COUNSELOR',
+  TELECALLER: 'TELECALLER',
+  MANAGER: 'MANAGER',
+  SUPPORT: 'SUPPORT',
+  MANAGEMENT: 'MANAGEMENT',
+  SALES: 'SALES',
+  TELE_CALLER: 'TELE_CALLER',
+  DEVELOPER: 'DEVELOPER',
+  MARKETING: 'MARKETING'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Post: 'Post',
   Faq: 'Faq',
+  KnowledgeFile: 'KnowledgeFile',
   Lead: 'Lead',
   Appointment: 'Appointment',
   Admin: 'Admin',
   Conversation: 'Conversation',
-  ConversationMessage: 'ConversationMessage'
+  ConversationMessage: 'ConversationMessage',
+  Course: 'Course'
 };
 
 /**

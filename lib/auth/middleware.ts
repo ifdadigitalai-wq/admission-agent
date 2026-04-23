@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { verifyToken, AdminPayload } from "./jwt";
+import { hasPermission, Feature } from "./permissions";
 
 export function getAdminFromRequest(req: NextRequest): AdminPayload | null {
   const authHeader = req.headers.get("authorization");
@@ -31,3 +32,14 @@ export function requireAdmin(req: NextRequest): AdminPayload {
   if (!admin) throw new Error("Unauthorized");
   return admin;
 }
+
+/**
+ * Verify the request is from an authenticated admin with permission
+ * to access the specified feature. Throws "Unauthorized" or "Forbidden".
+ */
+export function requireRole(req: NextRequest, feature: Feature): AdminPayload {
+  const admin = getAdminFromRequest(req);
+  if (!admin) throw new Error("Unauthorized");
+  if (!hasPermission(admin.role, feature)) throw new Error("Forbidden");
+  return admin;
+}
